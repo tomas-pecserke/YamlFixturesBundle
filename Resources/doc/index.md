@@ -254,7 +254,7 @@ Acme\DemoBundle\Entity\Person:
 
 ## Using DataTransformer
 
-Property `data_transformer` allows you to transform an array into another value.
+Property `@dataTransformer` allows you to transform an array into another value.
 
 Dor example let `Person` have field `birthDay` of type `DateTime`.
 As YaML only allows some types like arrays, strings and numbers, we need a way to transform them.
