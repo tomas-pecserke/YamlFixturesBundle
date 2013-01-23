@@ -391,7 +391,9 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             array('value2', 'value3', 'value0', 'value1')
         );
 
+        ob_start();
         $this->loader->load($this->manager);
+        ob_end_clean();
 
         $objects = $this->manager->all();
 
