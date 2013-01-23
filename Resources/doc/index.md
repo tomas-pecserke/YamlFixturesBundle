@@ -126,6 +126,14 @@ will be "overriden" by those from `app/Resources`. No merging is done.
 Property `data` contains data, that will be transformed into database objects.
 **Property of object must be public or accessible via setter or add method.**
 
+## Loading fixtures
+
+YaML fixtures are loaded in similar way to ordinary fixtures:
+
+``` shell
+$ php app/console publero:fixtures:load
+```
+
 ## Using references
 
 Reference is a named entity / document. Sometimes you need to use an object as a value of property of another.
@@ -202,6 +210,8 @@ we don't know, which one is loaded first, but that doesn't matter to us.
 
 **Order in which fixtures with same value of `order` property and different class
 (or specified in different files) is not specified.**
+
+**Fixtures without specified order are loader after all ordered fixtures.**
 
 ## Postpersist actions
 
