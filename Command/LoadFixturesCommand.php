@@ -36,10 +36,11 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $bundle = $this->getContainer()->get('kernel')->getBundle('PubleroYamlFixturesBundle');
         $input->setArgument('command', 'doctrine:fixtures:load');
         $input->setArgument('fixtures', realpath($bundle->getPath() . '/DataFixtures/'));
 
-        $command = $this->getApplication()->find('doctrine:fixtures:load');
+        $command = $this->getApplication()->get('doctrine:fixtures:load');
 
         return $command->run($input, $output);
     }
