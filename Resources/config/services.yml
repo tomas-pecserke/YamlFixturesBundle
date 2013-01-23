@@ -1,0 +1,9 @@
+parameters:
+    publero_fixtures.object_transformer.default.class: Publero\YamlFixturesBundle\DataTransformer\ObjectTransformer
+
+services:
+    publero_fixtures.object_transformer.default:
+        class: "%publero_fixtures.object_transformer.default.class%"
+
+    publero_fixtures.object_transformer:
+        alias: publero_fixtures.object_transformer.default

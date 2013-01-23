@@ -1,0 +1,4 @@
+Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
+    order: 2
+    equal_condition: [ publicProperty ]
+    data:

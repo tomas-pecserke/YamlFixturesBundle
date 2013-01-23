@@ -1,0 +1,9 @@
+composer.lock
+phpunit.xml
+Tests/autoload.php
+catalog.xml
+vendor/*
+
+.buildpath
+.project
+.settings

@@ -1,0 +1,70 @@
+<?php
+namespace Publero\YamlFixturesBundle\Tests\DataTransformer;
+
+use Publero\YamlFixturesBundle\DataTransformer\ObjectTransformer;
+use Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
+
+class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @var ObjectTransformer
+     */
+    private $transformer;
+
+    protected function setUp()
+    {
+        $this->transformer = new ObjectTransformer();
+    }
+
+    public function testTransform()
+    {
+        $data = array(
+            'publicProperty' => 'value1',
+            'privatePropertyWithSetMethod' => 'value2',
+            'privatePropertyWithAddMethod' => 'value3'
+        );
+
+        $object = $this->transformer->transform(
+            $data,
+            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
+        );
+
+        $this->assertTrue($object instanceof ExampleObject);
+        $this->assertEquals($data['publicProperty'], $object->publicProperty);
+        $this->assertEquals($data['privatePropertyWithSetMethod'], $object->getPrivatePropertyWithSetMethod());
+        $this->assertEquals($data['privatePropertyWithAddMethod'], $object->getPrivatePropertyWithAddMethod());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTransformPrivatePropertyWithoutSetter()
+    {
+        $object = $this->transformer->transform(
+            array('privateProperty' => 'value'),
+            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTransformPrivateNonExistProperty()
+    {
+        $object = $this->transformer->transform(
+            array('nonExistProperty' => 'value'),
+            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTransformPrivateNonExistClass()
+    {
+        $object = $this->transformer->transform(
+            array(),
+            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\NonExistObject'
+        );
+    }
+}

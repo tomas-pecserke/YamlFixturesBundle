@@ -1,0 +1,49 @@
+{
+    "name": "publero/yaml-fixtures-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony PubleroYamlFixturesBundle",
+    "keywords": ["Data fixtures"],
+    "homepage": "https://github.com/Publero/YamlFixturesBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomáš Pecsérke",
+            "email": "tomas.pecserke@publero.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Martin Hlaváč",
+            "email": "martin.hlavac@publero.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Jiří Horký",
+            "email": "jiri.horky@publero.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Publero, s.r.o.",
+            "homepage": "http://publero.com/"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "Publero\\YamlFixturesBundle": "" }
+    },
+    "target-dir": "Publero/YamlFixturesBundle",
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/http-kernel": ">=2.1,<2.2",
+        "symfony/dependency-injection": ">=2.1,<2.2",
+        "symfony/config": ">=2.1,<2.2",
+        "symfony/console": ">=2.1,<2.2",
+        "symfony/filesystem": ">=2.1,<2.2",
+        "symfony/yaml": ">=2.1,<2.2",
+        "doctrine/doctrine-fixtures-bundle": "*"
+    },
+    "require-dev": {
+        "doctrine/doctrine-bundle": "*",
+        "doctrine/orm": "*",
+        "symfony/yaml": "2.1.*"
+    },
+    "minimum-stability": "dev"
+}
