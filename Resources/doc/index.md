@@ -14,7 +14,7 @@ This version of the bundle requires Symfony 2.0+ and [Composer](http://getcompos
 
 Add PubleroYamlFixturesBundle in your composer.json:
 
-```js
+``` js
 {
     "require": {
         "publero/yaml-fixtures-bundle": "*"
@@ -108,6 +108,7 @@ class Person
 All you need to do is create a file in your bundle's `Resources/fixtures` directory formatted like this:
 
 ``` yaml
+# AcmeDemoBundle/Resources/fixtures/person.yml
 Acme\DemoBundle\Entity\Person:
     data:
         john_doe:
@@ -118,8 +119,12 @@ Acme\DemoBundle\Entity\Person:
             lastName: Doe
 ```
 
+It's also possible to place your YaML fixtures into `app/Resources/YourBundleName/fixtures` directory.
+In that case alle files with same filename in in your bundle's `Resources/fixtures` directory
+will be "overriden" by those from `app/Resources`. No merging is done.
+
 Property `data` contains data, that will be transformed into database objects.
-*Property of object must be public or accessible thru setter or add method.*
+**Property of object must be public or accessible via setter or add method.**
 
 ## Using references
 
@@ -141,19 +146,20 @@ Acme\DemoBundle\Entity\Person:
             mate: '@jane_doe'
 ```
 
-Notice `jane_doe` is defined as first - it's because *at the time of loading John,
-we need Jane to be already loaded, so we can assign her as John's mate*.
+Notice `jane_doe` is defined as first.
+**At the time of loading object referencing another object,
+we need the referenced one to be already loaded**.
 
 ## Ordering fixtures
 
 As you can see, we often need a way to ensure order in which the fixtures are loaded.
-The fixtures of same class in one file are loaded in same order, in which they are difined in YaML file.
+The fixtures of same class in one file are loaded in same order, in which they are defined in YaML file.
 We can controll the order of fixture loading using `order` property.
 
 So let's say, we want to define Jane in separate file (she still must be loaded before John),
 and we added property `address` to `Person` and it also need to be loaded before the person.
 
-*The `order` property is respected across all fixture files.*
+**The `order` property is respected across all fixture files.**
 
 ``` yaml
 # person_1.yml
@@ -191,8 +197,11 @@ Acme\DemoBundle\Entity\Person:
             address: '@john_doe_address'
 ```
 
-In this example the addresses are loaded first.
-*Order in which fixtures are loaded is not guaranteed across files.*
+In this example the addresses are loaded first. Since they have same order,
+we don't know, which one is loaded first, but that doesn't matter to us.
+
+**Order in which fixtures with same value of `order` property and different class
+(or specified in different files) is not specified.**
 
 ## Postpersist actions
 
