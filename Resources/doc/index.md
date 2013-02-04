@@ -1,4 +1,4 @@
-Getting Started With PubleroYamlFixturesBundle
+Getting Started With PecserkeYamlFixturesBundle
 ==============================================
 
 Fixtures are used to load a controlled set of data into a database.
@@ -12,12 +12,12 @@ This version of the bundle requires Symfony 2.0+ and [Composer](http://getcompos
 
 ## Installation
 
-Add PubleroYamlFixturesBundle in your composer.json:
+Add PecserkeYamlFixturesBundle in your composer.json:
 
 ``` js
 {
     "require": {
-        "publero/yaml-fixtures-bundle": "*"
+        "pecserke/yaml-fixtures-bundle": "*"
     }
 }
 ```
@@ -25,10 +25,10 @@ Add PubleroYamlFixturesBundle in your composer.json:
 Now tell composer to download the bundle by running the command:
 
 ``` bash
-$ php composer.phar update publero/yaml-fixtures-bundle
+$ php composer.phar update pecserke/yaml-fixtures-bundle
 ```
 
-Composer will install the bundle into your project's `vendor/publero` directory.
+Composer will install the bundle into your project's `vendor/pecserke` directory.
 
 Enable the bundle in the kernel:
 
@@ -40,7 +40,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Publero\YamlFixturesBundle\PubleroYamlFixturesBundle(),
+        new Pecserke\YamlFixturesBundle\PecserkeYamlFixturesBundle(),
     );
 }
 ```
@@ -131,7 +131,7 @@ Property `data` contains data, that will be transformed into database objects.
 YaML fixtures are loaded in similar way to ordinary fixtures:
 
 ``` shell
-$ php app/console publero:fixtures:load
+$ php app/console pecserke:fixtures:load
 ```
 
 ## Using references
@@ -260,13 +260,13 @@ Dor example let `Person` have field `birthDay` of type `DateTime`.
 As YaML only allows some types like arrays, strings and numbers, we need a way to transform them.
 
 First we need to define `DateTimeDataTransformer`
-implemeting `Publero\YamlFixturesBundle\DataTransformer\DataTransformerInterface`:
+implemeting `Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface`:
 
 ``` php
 <?php
 namespace Acme\DemoBundle\DataTransformer;
 
-use Publero\YamlFixturesBundle\DataTransformer\DataTransformerInterface
+use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface
 
 class DateTimeDataTransformer implements DataTransformerInterface
 {
@@ -300,7 +300,7 @@ Acme\DemoBundle\Entity\Person:
 
 If the default transformation of data to database objects is not sufficiet,
 you can specify custom object transformer implemeting
-`Publero\YamlFixturesBundle\DataTransformer\DataTransformerInterface`.
+`Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface`.
 
 ``` yaml
 Acme\DemoBundle\Entity\Person:

@@ -1,19 +1,16 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\DataFixtures;
+namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures;
 
-use Publero\YamlFixturesBundle\Tests\Fixtures\AcmeDemoBundle\AcmeDemoBundle;
-
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-use Publero\YamlFixturesBundle\Tests\Fixtures\app\TestKernel;
-
-use Publero\YamlFixturesBundle\DataFixtures\YamlFixturesLoader;
-use Publero\YamlFixturesBundle\DataTransformer\ObjectTransformer;
-use Publero\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryObjectManager;
-use Publero\YamlFixturesBundle\Tests\Fixtures\DataFixtures\ReferenceRepository;
-use Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer;
-use Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
+use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLoader;
+use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryObjectManager;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\AcmeDemoBundle\AcmeDemoBundle;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\app\TestKernel;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\ReferenceRepository;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,7 +37,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->container = new ContainerBuilder();
-        $this->container->set('publero_fixtures.object_transformer', new ObjectTransformer());
+        $this->container->set('pecserke_fixtures.object_transformer', new ObjectTransformer());
 
         $this->manager = new InMemoryObjectManager();
         $this->referenceRepository = new ReferenceRepository($this->manager);
@@ -53,7 +50,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadFixture()
     {
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object.0' => array(
                     'publicProperty' => 'value1',
@@ -89,7 +86,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadFixturePrivatePropertyWithoutSetter()
     {
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array('privateProperty' => 'value1')
             )
@@ -103,7 +100,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadFixtureNotExistProperty()
     {
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array('notExistProperty' => 'value1')
             )
@@ -115,7 +112,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $parameterName = 'test.param';
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => "#$parameterName")
             )
@@ -136,7 +133,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadFixtureParameterNotExist()
     {
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => '#parameter_that_dont_exist')
             )
@@ -148,7 +145,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $referenceName = 'example.reference';
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => "@$referenceName")
             )
@@ -169,7 +166,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadFixtureReferenceNotExist()
     {
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => '@reference_that_dont_exist')
             )
@@ -181,7 +178,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $transformerServiceName = 'example.reference';
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => array(
@@ -203,9 +200,9 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadFixtureDataTransformerClassName()
     {
-        $transformerClassName = 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer';
+        $transformerClassName = 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer';
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => array(
@@ -228,7 +225,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $referenceName = 'example.reference';
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
@@ -250,7 +247,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadFixturePostPersistNotValidCallback()
     {
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
@@ -269,7 +266,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $referenceName = 'example.reference';
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
@@ -285,8 +282,8 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadFixtureCustomObjectTransformerClassName()
     {
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
-            'transformer' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ObjectTransformer',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'transformer' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ObjectTransformer',
             'data' => array(
                 'example.object' => array('publicProperty' => 'now')
             )
@@ -304,7 +301,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $serviceName = 'object_transformer.all_date_time';
         $fixture = array(
-            'class' => 'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'transformer' => "@$serviceName",
             'data' => array(
                 'example.object' => array('publicProperty' => 'now')
@@ -313,7 +310,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->container->set(
             $serviceName,
-            new \Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ObjectTransformer()
+            new \Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ObjectTransformer()
         );
         $this->loader->loadFixture($fixture, $this->manager);
 

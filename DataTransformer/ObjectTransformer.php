@@ -1,5 +1,5 @@
 <?php
-namespace Publero\YamlFixturesBundle\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\DataTransformer;
 
 class ObjectTransformer implements ObjectTransformerInterface
 {

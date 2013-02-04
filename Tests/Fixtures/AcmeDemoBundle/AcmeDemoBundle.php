@@ -1,5 +1,5 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\Fixtures\AcmeDemoBundle;
+namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\AcmeDemoBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

@@ -1,7 +1,7 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
 
-use Publero\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
+use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
 
 class DateTimeDataTransformer implements DataTransformerInterface
 {

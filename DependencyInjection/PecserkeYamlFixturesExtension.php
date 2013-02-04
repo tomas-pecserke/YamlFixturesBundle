@@ -1,12 +1,12 @@
 <?php
-namespace Publero\YamlFixturesBundle\DependencyInjection;
+namespace Pecserke\YamlFixturesBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class PubleroYamlFixturesExtension extends Extension
+class PecserkeYamlFixturesExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {

@@ -1,9 +1,9 @@
 parameters:
-    publero_fixtures.object_transformer.default.class: Publero\YamlFixturesBundle\DataTransformer\ObjectTransformer
+    pecserke_fixtures.object_transformer.default.class: Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer
 
 services:
-    publero_fixtures.object_transformer.default:
-        class: "%publero_fixtures.object_transformer.default.class%"
+    pecserke_fixtures.object_transformer.default:
+        class: "%pecserke_fixtures.object_transformer.default.class%"
 
-    publero_fixtures.object_transformer:
-        alias: publero_fixtures.object_transformer.default
+    pecserke_fixtures.object_transformer:
+        alias: pecserke_fixtures.object_transformer.default

@@ -1,8 +1,8 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\Tests\DataTransformer;
 
-use Publero\YamlFixturesBundle\DataTransformer\ObjectTransformer;
-use Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
+use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
 
 class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
 
         $object = $this->transformer->transform(
             $data,
-            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
+            'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
         );
 
         $this->assertTrue($object instanceof ExampleObject);
@@ -42,7 +42,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $object = $this->transformer->transform(
             array('privateProperty' => 'value'),
-            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
+            'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
         );
     }
 
@@ -53,7 +53,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $object = $this->transformer->transform(
             array('nonExistProperty' => 'value'),
-            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
+            'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
         );
     }
 
@@ -64,7 +64,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $object = $this->transformer->transform(
             array(),
-            'Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer\NonExistObject'
+            'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\NonExistObject'
         );
     }
 }

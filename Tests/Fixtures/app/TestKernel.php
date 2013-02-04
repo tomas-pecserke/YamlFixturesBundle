@@ -1,5 +1,5 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\Fixtures\app;
+namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\app;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;

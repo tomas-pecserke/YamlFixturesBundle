@@ -1,5 +1,5 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\Fixtures\DataFixtures;
+namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository as BaseReferenceRepository;
 

@@ -1,35 +1,21 @@
 {
-    "name": "publero/yaml-fixtures-bundle",
+    "name": "pecserke/yaml-fixtures-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony PubleroYamlFixturesBundle",
+    "description": "Symfony PecserkeYamlFixturesBundle",
     "keywords": ["Data fixtures"],
-    "homepage": "https://github.com/Publero/YamlFixturesBundle",
+    "homepage": "https://github.com/Pecserke/YamlFixturesBundle",
     "license": "MIT",
     "authors": [
         {
             "name": "Tomáš Pecsérke",
-            "email": "tomas.pecserke@publero.com",
+            "email": "tomas@pecserke.eu",
             "role": "Developer"
-        },
-        {
-            "name": "Martin Hlaváč",
-            "email": "martin.hlavac@publero.com",
-            "role": "Developer"
-        },
-        {
-            "name": "Jiří Horký",
-            "email": "jiri.horky@publero.com",
-            "role": "Developer"
-        },
-        {
-            "name": "Publero, s.r.o.",
-            "homepage": "http://publero.com/"
         }
     ],
     "autoload": {
-        "psr-0": { "Publero\\YamlFixturesBundle": "" }
+        "psr-0": { "Pecserke\\YamlFixturesBundle": "" }
     },
-    "target-dir": "Publero/YamlFixturesBundle",
+    "target-dir": "Pecserke/YamlFixturesBundle",
     "require": {
         "php": ">=5.3.2",
         "symfony/http-kernel": ">=2.1,<2.2",

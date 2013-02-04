@@ -1,19 +1,19 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\DependencyInjection;
+namespace Pecserke\YamlFixturesBundle\Tests\DependencyInjection;
 
-use Publero\YamlFixturesBundle\DataTransformer\ObjectTransformer;
-use Publero\YamlFixturesBundle\DependencyInjection\PubleroYamlFixturesExtension;
+use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
+use Pecserke\YamlFixturesBundle\DependencyInjection\PecserkeYamlFixturesExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PubleroYamlFixturesExtensionTest extends \PHPUnit_Framework_TestCase
+class PecserkeYamlFixturesExtensionTest extends \PHPUnit_Framework_TestCase
 {
     public function testLoad()
     {
         $container = new ContainerBuilder();
-        $extension = new PubleroYamlFixturesExtension();
+        $extension = new PecserkeYamlFixturesExtension();
         $extension->load(array(), $container);
         $container->compile();
 
-        $this->assertTrue($container->get('publero_fixtures.object_transformer') instanceof ObjectTransformer);
+        $this->assertTrue($container->get('pecserke_fixtures.object_transformer') instanceof ObjectTransformer);
     }
 }

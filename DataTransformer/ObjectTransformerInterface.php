@@ -1,5 +1,5 @@
 <?php
-namespace Publero\YamlFixturesBundle\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\DataTransformer;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 

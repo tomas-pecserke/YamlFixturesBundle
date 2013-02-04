@@ -1,5 +1,5 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\Command;
+namespace Pecserke\YamlFixturesBundle\Tests\Command;
 
 class LoadFixturesCommandTest extends \PHPUnit_Framework_TestCase
 {

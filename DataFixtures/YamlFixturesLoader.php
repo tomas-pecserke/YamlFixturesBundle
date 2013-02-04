@@ -1,12 +1,12 @@
 <?php
-namespace Publero\YamlFixturesBundle\DataFixtures;
+namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
-use Publero\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
-use Publero\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
+use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
+use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -59,11 +59,11 @@ class YamlFixturesLoader extends AbstractFixture implements OrderedFixtureInterf
         }
         $transformer = isset($transformer) ?
             $transformer :
-            $this->container->get('publero_fixtures.object_transformer')
+            $this->container->get('pecserke_fixtures.object_transformer')
         ;
         if (!($transformer instanceof ObjectTransformerInterface)) {
             $class = get_class($transformer);
-            $expected = 'Publero\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface';
+            $expected = 'Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface';
             throw new \InvalidArgumentException("data transformer '$class' is not an instance of $expected");
         }
 
@@ -119,7 +119,7 @@ class YamlFixturesLoader extends AbstractFixture implements OrderedFixtureInterf
 
             if (!($dataTransformer instanceof DataTransformerInterface)) {
                 $class = get_class($dataTransformer);
-                $expected = 'Publero\YamlFixturesBundle\DataTransformer\DataTransformerInterface';
+                $expected = 'Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface';
                 throw new \InvalidArgumentException("data transformer '$class' is not an instance of $expected");
             }
         }

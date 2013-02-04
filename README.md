@@ -1,4 +1,4 @@
-PubleroYamlFixturesBundle
+PecserkeYamlFixturesBundle
 =========================
 
 This bundle for Symfony 2 allows you to write your

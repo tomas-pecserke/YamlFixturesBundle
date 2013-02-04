@@ -1,7 +1,7 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
 
-use Publero\YamlFixturesBundle\DataTransformer\ObjectTransformer as BaseObjectTransformer;
+use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer as BaseObjectTransformer;
 
 class ObjectTransformer extends BaseObjectTransformer
 {

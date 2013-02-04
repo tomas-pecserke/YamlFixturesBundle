@@ -1,5 +1,5 @@
 <?php
-namespace Publero\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
 
 class ExampleObject
 {
