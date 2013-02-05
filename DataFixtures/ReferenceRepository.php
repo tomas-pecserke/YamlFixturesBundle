@@ -1,11 +1,15 @@
 <?php
-namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures;
+namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository as BaseReferenceRepository;
 
 class ReferenceRepository extends BaseReferenceRepository
 {
     private $references = array();
+
+    public function __construct()
+    {
+    }
 
     public function getReference($name)
     {
@@ -27,7 +31,9 @@ class ReferenceRepository extends BaseReferenceRepository
     public function addReference($name, $object)
     {
         if (isset($this->references[$name])) {
-            throw new \BadMethodCallException("Reference to: ({$name}) already exists, use method setReference in order to override it");
+            throw new \BadMethodCallException(
+                "Reference to: ({$name}) already exists, use method setReference in order to override it"
+            );
         }
         $this->setReference($name, $object);
     }
