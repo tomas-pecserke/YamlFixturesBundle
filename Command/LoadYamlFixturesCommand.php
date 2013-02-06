@@ -127,7 +127,8 @@ EOT
                 $class = $fixture['class'];
                 if ($orm !== null) {
                     $om = $orm->getManagerForClass($class);
-                } else if ($odm !== null) {
+                }
+                if ($om === null && $odm !== null) {
                     $om = $odm->getManagerForClass($class);
                 }
 

@@ -22,6 +22,7 @@ class YamlFixtureFileParser
 
         $sorted = [];
         $unsorted = [];
+
         foreach ($fixturesData as $file => $fixtures) {
             foreach ($fixtures as $class => $fixture) {
                 if (!class_exists($class)) {
@@ -31,14 +32,14 @@ class YamlFixtureFileParser
                 $fixture['file'] = $file;
                 $fixture['class'] = $class;
 
-                if (!isset($fixture['order'])) {
+                if (isset($fixture['order'])) {
                     $order = $fixture['order'];
                     unset($fixture['order']);
                     if (!is_int($order) && !ctype_digit($order)) {
                         $error = "order must be int, '$order' given in file '$file' fixture '$class'";
                         throw new \InvalidArgumentException($error);
                     }
-                    $sorted[(int) $order][] = $fixture;
+                    $sorted[$order][] = $fixture;
                 } else {
                     $unsorted[] = $fixture;
                 }
