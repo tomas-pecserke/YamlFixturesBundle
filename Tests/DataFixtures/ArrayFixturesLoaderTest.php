@@ -1,18 +1,18 @@
 <?php
 namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures;
 
-use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLoader;
+use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
+use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryObjectManager;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\AcmeDemoBundle\AcmeDemoBundle;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\app\TestKernel;
-use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
+class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ContainerBuilder
@@ -42,12 +42,12 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         $this->manager = new InMemoryObjectManager();
         $this->referenceRepository = new ReferenceRepository($this->manager);
 
-        $this->loader = new YamlFixturesLoader();
+        $this->loader = new ArrayFixturesLoader();
         $this->loader->setReferenceRepository($this->referenceRepository);
         $this->loader->setContainer($this->container);
     }
 
-    public function testLoadFixture()
+    public function testLoad()
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
@@ -64,7 +64,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
                 )
             )
         );
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $objects = $this->manager->all();
 
@@ -83,7 +83,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixturePrivatePropertyWithoutSetter()
+    public function testLoadPrivatePropertyWithoutSetter()
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
@@ -91,13 +91,13 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
                 'example.object' => array('privateProperty' => 'value1')
             )
         );
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixtureNotExistProperty()
+    public function testLoadNotExistProperty()
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
@@ -105,10 +105,10 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
                 'example.object' => array('notExistProperty' => 'value1')
             )
         );
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
     }
 
-    public function testLoadFixtureParameter()
+    public function testLoadParameter()
     {
         $parameterName = 'test.param';
         $fixture = array(
@@ -119,7 +119,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->container->setParameter($parameterName, 'parameter value');
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $objects = $this->manager->all();
 
@@ -130,7 +130,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixtureParameterNotExist()
+    public function testLoadParameterNotExist()
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
@@ -138,10 +138,10 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
                 'example.object' => array('publicProperty' => '#parameter_that_dont_exist')
             )
         );
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
     }
 
-    public function testLoadFixtureReference()
+    public function testLoadReference()
     {
         $referenceName = 'example.reference';
         $fixture = array(
@@ -152,7 +152,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->referenceRepository->setReference($referenceName, new ExampleObject());
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $objects = $this->manager->all();
 
@@ -163,7 +163,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixtureReferenceNotExist()
+    public function testLoadReferenceNotExist()
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
@@ -171,10 +171,10 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
                 'example.object' => array('publicProperty' => '@reference_that_dont_exist')
             )
         );
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
     }
 
-    public function testLoadFixtureDataTransformerService()
+    public function testLoadDataTransformerService()
     {
         $transformerServiceName = 'example.reference';
         $fixture = array(
@@ -190,7 +190,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->container->set($transformerServiceName, new DateTimeDataTransformer());
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $objects = $this->manager->all();
 
@@ -198,7 +198,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($objects[0]->publicProperty instanceof \DateTime);
     }
 
-    public function testLoadFixtureDataTransformerClassName()
+    public function testLoadDataTransformerClassName()
     {
         $transformerClassName = 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer';
         $fixture = array(
@@ -213,7 +213,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $objects = $this->manager->all();
 
@@ -221,7 +221,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($objects[0]->publicProperty instanceof \DateTime);
     }
 
-    public function testLoadFixturePostPersist()
+    public function testLoadPostPersist()
     {
         $referenceName = 'example.reference';
         $fixture = array(
@@ -236,7 +236,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 
         $example = new ExampleObject();
         $this->referenceRepository->setReference($referenceName, $example);
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $this->assertTrue($example->getPrivatePropertyWithSetMethod() instanceof ExampleObject);
     }
@@ -244,7 +244,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixturePostPersistNotValidCallback()
+    public function testLoadPostPersistNotValidCallback()
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
@@ -256,13 +256,13 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixturePostPersistNotValidCallbackMetohd()
+    public function testLoadPostPersistNotValidCallbackMetohd()
     {
         $referenceName = 'example.reference';
         $fixture = array(
@@ -276,10 +276,10 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->referenceRepository->setReference($referenceName, new ExampleObject());
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
     }
 
-    public function testLoadFixtureCustomObjectTransformerClassName()
+    public function testLoadCustomObjectTransformerClassName()
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
@@ -289,7 +289,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $objects = $this->manager->all();
 
@@ -297,7 +297,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($objects[0]->publicProperty instanceof \DateTime);
     }
 
-    public function testLoadFixtureCustomObjectTransformerService()
+    public function testLoadCustomObjectTransformerService()
     {
         $serviceName = 'object_transformer.all_date_time';
         $fixture = array(
@@ -312,7 +312,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             $serviceName,
             new \Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ObjectTransformer()
         );
-        $this->loader->loadFixture($fixture, $this->manager);
+        $this->loader->load($fixture, $this->manager);
 
         $objects = $this->manager->all();
 
@@ -328,7 +328,7 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixtureEqualConditionPropertyWithoutAccess()
+    public function testLoadEqualConditionPropertyWithoutAccess()
     {
         $this->markTestIncomplete();
     }
@@ -336,77 +336,8 @@ class YamlFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadFixtureEqualConditionNotExistProperty()
+    public function testLoadEqualConditionNotExistProperty()
     {
         $this->markTestIncomplete();
-    }
-
-    public function testGetFixtureFiles()
-    {
-        /*
-         * Even thou Test/Fixtures/AcmeDemoBundle/Resources/fixtures/ contains both files
-         * example_1.yml and example_2.yml, the second one is overriden by
-         * Test/Fixtures/app/Resources/AcmeDemoBundle/fixtures/example_2.yml.
-         */
-
-        $this->container->setParameter('kernel.root_dir', realpath('./Tests/Fixtures/app'));
-        $kernel = new TestKernel('test', false);
-        $bundle = new AcmeDemoBundle();
-        $kernel->setBundles(array($bundle));
-        $kernel->boot();
-        $this->container->set('kernel', $kernel);
-
-        $expected = array(
-            realpath($bundle->getPath() . '/Resources/fixtures/example_1.yml'),
-            realpath($kernel->getRootDir() . '/Resources/' . $bundle->getName() . '/fixtures/example_2.yml'),
-        );
-
-        $this->assertEquals($expected, $this->loader->getFixtureFiles());
-    }
-
-    public function testLoad()
-    {
-        $this->container->setParameter('kernel.root_dir', realpath('./Tests/Fixtures/app'));
-        $kernel = new TestKernel('test', false);
-        $bundle = new AcmeDemoBundle();
-        $kernel->setBundles(array($bundle));
-        $kernel->boot();
-        $this->container->set('kernel', $kernel);
-
-        /**
-         * Fixtures with values 'value2', 'value3' are defined with order 2,
-         * those with 'value0', 'value1' with order 3.
-         */
-
-        $expected = array_map(
-            function($item) {
-                $object = new ExampleObject();
-                $object->publicProperty = $item;
-
-                return $object;
-            },
-            array('value2', 'value3', 'value0', 'value1')
-        );
-
-        ob_start();
-        $this->loader->load($this->manager);
-        ob_end_clean();
-
-        $objects = $this->manager->all();
-
-        for ($i = 0; $i < count($expected); $i++) {
-            $this->assertEquals(
-                $expected[$i]->publicProperty,
-                $objects[$i]->publicProperty
-            );
-            $this->assertEquals(
-                $expected[$i]->getPrivatePropertyWithSetMethod(),
-                $objects[$i]->getPrivatePropertyWithSetMethod()
-            );
-            $this->assertEquals(
-                $expected[$i]->getPrivatePropertyWithAddMethod(),
-                $objects[$i]->getPrivatePropertyWithAddMethod()
-            );
-        }
     }
 }
