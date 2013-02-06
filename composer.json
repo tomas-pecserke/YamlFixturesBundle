@@ -24,12 +24,12 @@
         "symfony/console": ">=2.1,<2.2",
         "symfony/filesystem": ">=2.1,<2.2",
         "symfony/yaml": ">=2.1,<2.2",
-        "doctrine/doctrine-fixtures-bundle": "*"
+        "doctrine/data-fixtures": "*"
     },
     "require-dev": {
         "doctrine/doctrine-bundle": "*",
         "doctrine/orm": "*",
-        "symfony/yaml": "2.1.*"
+        "doctrine/mongodb-odm": "*"
     },
     "minimum-stability": "dev"
 }
