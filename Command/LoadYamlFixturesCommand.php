@@ -104,7 +104,7 @@ EOT
         if (!$input->getOption('append')) {
             $ormPurger = new ORMPurger();
             $truncate = $input->getOption('purge-with-truncate');
-            $ormPurger->setPurgeMode(truncate ? ORMPurger::PURGE_MODE_TRUNCATE : ORMPurger::PURGE_MODE_DELETE);
+            $ormPurger->setPurgeMode($truncate ? ORMPurger::PURGE_MODE_TRUNCATE : ORMPurger::PURGE_MODE_DELETE);
             foreach (($orm !== null ? $orm->getManagers() : array()) as $em) {
                 $ormPurger->setEntityManager($em);
                 $ormPurger->purge();
