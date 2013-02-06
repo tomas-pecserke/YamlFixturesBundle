@@ -67,7 +67,7 @@ class YamlFixturesLocator
         if (is_dir($bundleDir)) {
             foreach (scandir($bundleDir) as $file) {
                 $filename = "$bundleDir/$file";
-                if (strripos($file, '.yml') === 0 && !is_dir($filename)) {
+                if (strripos($file, '.yml') !== false && !is_dir($filename)) {
                     $overrideFilename = "$appDir/$file";
                     if ($appDirExists && file_exists($overrideFilename) && !is_dir($overrideFilename)) {
                         $bundleFixtureFiles[] = $overrideFilename;
