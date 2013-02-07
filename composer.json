@@ -31,5 +31,9 @@
         "doctrine/orm": "*",
         "doctrine/mongodb-odm": "*"
     },
+    "suggest": {
+        "doctrine/orm": "Support for relation database fixtures",
+        "doctrine/mongodb-odm": "Support for mongo database fixtures"
+    }
     "minimum-stability": "dev"
 }
