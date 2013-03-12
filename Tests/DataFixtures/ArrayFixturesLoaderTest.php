@@ -55,12 +55,10 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
                 'example.object.0' => array(
                     'publicProperty' => 'value1',
                     'privatePropertyWithSetMethod' => 'value2',
-                    'privatePropertyWithAddMethod' => 'value3'
                 ),
                 'example.object.1' => array(
                     'publicProperty' => 'value4',
                     'privatePropertyWithSetMethod' => 'value5',
-                    'privatePropertyWithAddMethod' => 'value6'
                 )
             )
         );
@@ -81,7 +79,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException Symfony\Component\PropertyAccess\Exception\PropertyAccessDeniedException
      */
     public function testLoadPrivatePropertyWithoutSetter()
     {
@@ -95,7 +93,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      */
     public function testLoadNotExistProperty()
     {

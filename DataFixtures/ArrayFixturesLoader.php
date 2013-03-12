@@ -7,6 +7,7 @@ use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ArrayFixturesLoader implements ContainerAwareInterface
 {
@@ -134,19 +135,10 @@ class ArrayFixturesLoader implements ContainerAwareInterface
         $conditions = [];
         $publicVariables = get_object_vars($object);
 
-        foreach ($equalCondition as $field) {
-            $getMethodName = 'get' . ucfirst($field);
-            $isMethodName = 'is' . ucfirst($field);
-            if (array_key_exists($field, $publicVariables)) {
-                $conditions[$field] = $object->$field;
-            } else if (method_exists($object, $getMethodName)) {
-                $conditions[$field] = $object->$getMethodName();
-            } else if (method_exists($object, $getMethodName)) {
-                $conditions[$field] = $object->$getMethodName();
-            } else {
-                $class = get_class($object);
-                throw new \InvalidArgumentException("object '$class' doesn't have property '$field'");
-            }
+        $accessor = PropertyAccess::getPropertyAccessor();
+
+        foreach ($equalCondition as $property) {
+            $conditions[$property] = $accessor->getValue($object, $property);
         }
 
         return $manager->getRepository(get_class($object))->findBy($conditions);

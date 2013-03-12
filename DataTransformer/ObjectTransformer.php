@@ -1,6 +1,8 @@
 <?php
 namespace Pecserke\YamlFixturesBundle\DataTransformer;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 class ObjectTransformer implements ObjectTransformerInterface
 {
     /**
@@ -12,7 +14,9 @@ class ObjectTransformer implements ObjectTransformerInterface
      *
      * @param array $data
      * @param string $className
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
+     * @throws Symfony\Component\PropertyAccess\Exception\PropertyAccessDeniedException
      * @return mixed
      */
     public function transform(array $data, $className)
@@ -22,28 +26,10 @@ class ObjectTransformer implements ObjectTransformerInterface
         }
 
         $object = new $className();
-        $publicVariables = get_object_vars($object);
 
+        $accessor = PropertyAccess::getPropertyAccessor();
         foreach ($data as $property => $value) {
-            $setMethodName = 'set' . ucfirst($property);
-            $addMethodName = 'add' . ucfirst($property);
-
-            if (method_exists($object, $setMethodName)) {
-                $object->$setMethodName($value);
-            } else if (method_exists($object, $addMethodName)) {
-                if (!is_array($value)) {
-                    $value = [$value];
-                }
-                foreach ($value as $arg) {
-                    $object->$addMethodName($arg);
-                }
-            } else if (array_key_exists($property, $publicVariables)) {
-                $object->{$property} = $value;
-            } else {
-                throw new \InvalidArgumentException(
-                    "class '$className' does not have public property '$property' nor a setter method for it"
-                );
-            }
+            $accessor->setValue($object, (string) $property, $value);
         }
 
         return $object;

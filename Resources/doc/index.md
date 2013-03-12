@@ -17,7 +17,7 @@ Add PecserkeYamlFixturesBundle in your composer.json:
 ``` js
 {
     "require": {
-        "pecserke/yaml-fixtures-bundle": "*"
+        "pecserke/yaml-fixtures-bundle": "dev-master"
     }
 }
 ```
@@ -124,7 +124,7 @@ In that case alle files with same filename in in your bundle's `Resources/fixtur
 will be "overriden" by those from `app/Resources`. No merging is done.
 
 Property `data` contains data, that will be transformed into database objects.
-**Property of object must be public or accessible via setter or add method.**
+**Property of object must be public or accessible via setter method.**
 
 ## Loading fixtures
 

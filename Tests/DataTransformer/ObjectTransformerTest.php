@@ -21,7 +21,6 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
         $data = array(
             'publicProperty' => 'value1',
             'privatePropertyWithSetMethod' => 'value2',
-            'privatePropertyWithAddMethod' => 'value3'
         );
 
         $object = $this->transformer->transform(
@@ -36,7 +35,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException Symfony\Component\PropertyAccess\Exception\PropertyAccessDeniedException
      */
     public function testTransformPrivatePropertyWithoutSetter()
     {
@@ -47,9 +46,9 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      */
-    public function testTransformPrivateNonExistProperty()
+    public function testTransformNonExistProperty()
     {
         $object = $this->transformer->transform(
             array('nonExistProperty' => 'value'),
@@ -58,7 +57,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testTransformPrivateNonExistClass()
     {
