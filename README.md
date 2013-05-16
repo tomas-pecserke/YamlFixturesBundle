@@ -8,7 +8,7 @@ for both ORM and ODM. Define your progamatically loaded fixtures data in easily 
 Installation
 ------------
 
-Installation instructions are located in [documentation](YamlFixturesBundle/blob/master/Resources/doc/index.md).
+Installation instructions are located in [documentation](Resources/doc/index.md).
 
 License
 -------
