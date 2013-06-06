@@ -69,7 +69,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
             if (!empty($fixture['equal_condition'])) {
                 $result = $this->getSame($object, $fixture['equal_condition'], $manager);
                 if (count($result) > 0) {
-                    $this->referenceRepository->addReference($referenceName, $result[0]);
+                    $this->referenceRepository->addReference($referenceName, array_shift($result));
                     continue;
                 }
             }
@@ -133,9 +133,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
     protected function getSame($object, array $equalCondition, ObjectManager $manager)
     {
         $conditions = [];
-        $publicVariables = get_object_vars($object);
-
-        $accessor = PropertyAccess::getPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
 
         foreach ($equalCondition as $property) {
             $conditions[$property] = $accessor->getValue($object, $property);

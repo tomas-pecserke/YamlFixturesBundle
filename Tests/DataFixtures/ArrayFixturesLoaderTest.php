@@ -78,7 +78,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
+     * @expectedException \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      */
     public function testLoadPrivatePropertyWithoutSetter()
     {
@@ -92,7 +92,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
+     * @expectedException \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      */
     public function testLoadNotExistProperty()
     {
@@ -319,22 +319,81 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadFixtureEqualCondition()
     {
-        $this->markTestIncomplete();
+        $fixture = array(
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'data' => array(
+                'example.object.0' => array(
+                    'publicProperty' => 'value1',
+                    'privatePropertyWithSetMethod' => 'value2',
+                ),
+                'example.object.1' => array(
+                    'publicProperty' => 'value4',
+                    'privatePropertyWithSetMethod' => 'value5',
+                )
+            )
+        );
+        $this->loader->load($fixture, $this->manager);
+
+        $fixture = array(
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'equal_condition' => ['publicProperty'],
+            'data' => array(
+                'example.object.2' => array(
+                    'publicProperty' => 'value1',
+                    'privatePropertyWithSetMethod' => 'different_value2',
+                ),
+                'example.object.3' => array(
+                    'publicProperty' => 'value4',
+                    'privatePropertyWithSetMethod' => 'different_value5',
+                )
+            )
+        );
+        $this->loader->load($fixture, $this->manager);
+
+        $this->assertCount(2, $this->manager->all());
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      */
     public function testLoadEqualConditionPropertyWithoutAccess()
     {
-        $this->markTestIncomplete();
+        $fixture = array(
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'equal_condition' => ['privateProperty'],
+            'data' => array(
+                'example.object.2' => array(
+                    'publicProperty' => 'value1',
+                    'privatePropertyWithSetMethod' => 'value2',
+                ),
+                'example.object.3' => array(
+                    'publicProperty' => 'value4',
+                    'privatePropertyWithSetMethod' => 'value5',
+                )
+            )
+        );
+        $this->loader->load($fixture, $this->manager);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      */
     public function testLoadEqualConditionNotExistProperty()
     {
-        $this->markTestIncomplete();
+        $fixture = array(
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'equal_condition' => ['notExistProperty'],
+            'data' => array(
+                'example.object.2' => array(
+                    'publicProperty' => 'value1',
+                    'privatePropertyWithSetMethod' => 'value2',
+                ),
+                'example.object.3' => array(
+                    'publicProperty' => 'value4',
+                    'privatePropertyWithSetMethod' => 'value5',
+                )
+            )
+        );
+        $this->loader->load($fixture, $this->manager);
     }
 }

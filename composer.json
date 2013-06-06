@@ -2,7 +2,7 @@
     "name": "pecserke/yaml-fixtures-bundle",
     "type": "symfony-bundle",
     "description": "Symfony PecserkeYamlFixturesBundle",
-    "keywords": ["Data fixtures"],
+    "keywords": [ "Data fixtures", "Doctrine" ],
     "homepage": "https://github.com/tomas-pecserke/YamlFixturesBundle",
     "license": "MIT",
     "authors": [
@@ -30,11 +30,11 @@
     "require-dev": {
         "doctrine/doctrine-bundle": "*",
         "doctrine/orm": "2.3.*",
-        "doctrine/mongodb-odm": "1.0.*@dev"
+        "doctrine/mongodb-odm": "1.0.*"
     },
     "suggest": {
         "doctrine/orm": "Support for relation database fixtures",
         "doctrine/mongodb-odm": "Support for mongo database fixtures"
     },
-    "minimum-stability": "alpha"
+    "minimum-stability": "beta"
 }

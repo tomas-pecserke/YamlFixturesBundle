@@ -122,7 +122,7 @@ class InMemoryObjectManager implements ObjectManager
         return array_reduce(
             $this->objects,
             function ($result, $item) {
-                return array_merge($result, $item);
+                return array_merge($result, array_values($item));
             },
             array()
         );
