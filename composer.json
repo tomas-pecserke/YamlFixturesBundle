@@ -30,7 +30,7 @@
     "require-dev": {
         "doctrine/doctrine-bundle": "*",
         "doctrine/orm": "2.3.*",
-        "doctrine/mongodb-odm": "*"
+        "doctrine/mongodb-odm": "1.0.*@dev"
     },
     "suggest": {
         "doctrine/orm": "Support for relation database fixtures",
