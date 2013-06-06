@@ -21,9 +21,9 @@
         "doctrine/data-fixtures": "1.*@alpha",
         "symfony/http-kernel": ">=2.3,<2.4",
         "symfony/dependency-injection": ">=2.3,<2.4",
-        "symfony/config": ">=2.3,<2.4",
-        "symfony/console": ">=2.3,<2.4",
-        "symfony/filesystem": ">=2.3,<2.4",
+        "symfony/config": ">=2.1,<2.4",
+        "symfony/console": ">=2.1,<2.4",
+        "symfony/filesystem": ">=2.1,<2.4",
         "symfony/yaml": ">=2.3,<2.4",
         "symfony/property-access": ">=2.3,<2.4"
     },
