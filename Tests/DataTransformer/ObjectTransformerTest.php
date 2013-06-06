@@ -31,7 +31,6 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($object instanceof ExampleObject);
         $this->assertEquals($data['publicProperty'], $object->publicProperty);
         $this->assertEquals($data['privatePropertyWithSetMethod'], $object->getPrivatePropertyWithSetMethod());
-        $this->assertEquals($data['privatePropertyWithAddMethod'], $object->getPrivatePropertyWithAddMethod());
     }
 
     /**

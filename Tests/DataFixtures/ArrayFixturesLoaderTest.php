@@ -74,7 +74,6 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             $this->assertInstanceOf($fixture['class'], $object);
             $this->assertEquals($value['publicProperty'], $object->publicProperty);
             $this->assertEquals($value['privatePropertyWithSetMethod'], $object->getPrivatePropertyWithSetMethod());
-            $this->assertEquals($value['privatePropertyWithAddMethod'], $object->getPrivatePropertyWithAddMethod());
         }
     }
 
