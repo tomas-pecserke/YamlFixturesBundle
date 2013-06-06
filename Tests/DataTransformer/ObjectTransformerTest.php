@@ -34,7 +34,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\PropertyAccess\Exception\PropertyAccessDeniedException
+     * @expectedException Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      */
     public function testTransformPrivatePropertyWithoutSetter()
     {

@@ -16,7 +16,6 @@ class ObjectTransformer implements ObjectTransformerInterface
      * @param string $className
      * @throws InvalidArgumentException
      * @throws Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
-     * @throws Symfony\Component\PropertyAccess\Exception\PropertyAccessDeniedException
      * @return mixed
      */
     public function transform(array $data, $className)
