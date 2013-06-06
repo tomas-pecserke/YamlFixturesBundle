@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "Symfony PecserkeYamlFixturesBundle",
     "keywords": ["Data fixtures"],
-    "homepage": "https://github.com/Pecserke/YamlFixturesBundle",
+    "homepage": "https://github.com/tomas-pecserke/YamlFixturesBundle",
     "license": "MIT",
     "authors": [
         {
