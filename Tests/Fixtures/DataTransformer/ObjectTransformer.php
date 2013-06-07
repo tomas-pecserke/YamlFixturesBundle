@@ -6,7 +6,7 @@ use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer as BaseObjectT
 class ObjectTransformer extends BaseObjectTransformer
 {
     /**
-     * Transforms an associative array into an object of speficied class.
+     * Transforms an associative array into an object of specified class.
      *
      * Additionally all the properties are transformed into DateTime objects.
      *

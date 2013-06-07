@@ -11,7 +11,9 @@ class YamlFixtureFileParser
     /**
      * Parses YaML files and returns sorted array of fixtures.
      *
-     * @return array[order][]
+     * @param array $fixtureFiles
+     * @throws \InvalidArgumentException
+     * @return array
      */
     public function parse(array $fixtureFiles)
     {
@@ -20,8 +22,8 @@ class YamlFixtureFileParser
         };
         $fixturesData = array_combine($fixtureFiles, array_map($mapFn, $fixtureFiles));
 
-        $sorted = [];
-        $unsorted = [];
+        $sorted = array();
+        $unsorted = array();
 
         foreach ($fixturesData as $file => $fixtures) {
             foreach ($fixtures as $class => $fixture) {

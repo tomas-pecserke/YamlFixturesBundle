@@ -2,7 +2,6 @@
 namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class InMemoryObjectManager implements ObjectManager
 {
@@ -39,7 +38,8 @@ class InMemoryObjectManager implements ObjectManager
         }
 
         $class = get_class($object);
-        $property = (new \ReflectionClass($class))->getProperty('id');
+        $reflectionClass = new \ReflectionClass($class);
+        $property = $reflectionClass->getProperty('id');
 
         $property->setAccessible(true);
         $property->setValue($object, self::$count);

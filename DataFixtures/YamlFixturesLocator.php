@@ -28,7 +28,7 @@ class YamlFixturesLocator
     public function findInDirectory($directory)
     {
         if (!is_dir($directory)) {
-            throw new \InvalidArgumentException("'$directory' isn't a directory or can'ŧ read it");
+            throw new \InvalidArgumentException("'$directory' isn't a directory or can not read it");
         }
 
         $files = array_filter(
@@ -51,7 +51,7 @@ class YamlFixturesLocator
      *
      * Bundle's fixtures are located in /path/to/bundle/Resources/fixtures or in
      * /application/root/path/Resources/bundleName/fixtures.
-     * Those under application root path take precedens over those under bundle path.
+     * Those under application root path take precedents over those under bundle path.
      *
      * @param string $bundleName
      * @throws \InvalidArgumentException

@@ -26,7 +26,7 @@ class InMemoryRepository implements ObjectRepository
 
     public function find($id)
     {
-        return $this->manager->find($className, $id);
+        return $this->manager->find($this->className, $id);
     }
 
     public function findAll()

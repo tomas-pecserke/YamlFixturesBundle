@@ -16,8 +16,10 @@ class ReferenceRepository extends BaseReferenceRepository
         if (isset($this->references[$name])) {
             return $this->references[$name];
         }
-        if (isset($this->identities[$name])) {
-            return $this->identities[$name];
+
+        $identities = $this->getIdentities();
+        if (isset($identities[$name])) {
+            return $identities[$name];
         }
 
         throw new \InvalidArgumentException("reference '$name' doesn't exist");

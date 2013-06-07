@@ -1,14 +1,12 @@
 <?php
 namespace Pecserke\YamlFixturesBundle\DataTransformer;
 
-use Doctrine\Common\DataFixtures\ReferenceRepository;
-
 interface DataTransformerInterface
 {
     /**
      * Transforms data to another form.
      *
-     * @param mixed $class
+     * @param mixed $data
      * @return mixed
      */
     public function transform($data);

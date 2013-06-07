@@ -38,7 +38,7 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testTransformPrivatePropertyWithoutSetter()
     {
-        $object = $this->transformer->transform(
+        $this->transformer->transform(
             array('privateProperty' => 'value'),
             'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
         );
@@ -49,18 +49,18 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
      */
     public function testTransformNonExistProperty()
     {
-        $object = $this->transformer->transform(
+        $this->transformer->transform(
             array('nonExistProperty' => 'value'),
             'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
         );
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testTransformPrivateNonExistClass()
     {
-        $object = $this->transformer->transform(
+        $this->transformer->transform(
             array(),
             'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\NonExistObject'
         );

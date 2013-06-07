@@ -120,8 +120,8 @@ Acme\DemoBundle\Entity\Person:
 ```
 
 It's also possible to place your YaML fixtures into `app/Resources/YourBundleName/fixtures` directory.
-In that case alle files with same filename in in your bundle's `Resources/fixtures` directory
-will be "overriden" by those from `app/Resources`. No merging is done.
+In that case all files with same filename in in your bundle's `Resources/fixtures` directory
+will be "overridden" by those from `app/Resources`. No merging is done.
 
 Property `data` contains data, that will be transformed into database objects.
 **Property of object must be public or accessible via setter method.**
@@ -162,7 +162,7 @@ we need the referenced one to be already loaded**.
 
 As you can see, we often need a way to ensure order in which the fixtures are loaded.
 The fixtures of same class in one file are loaded in same order, in which they are defined in YaML file.
-We can controll the order of fixture loading using `order` property.
+We can control the order of fixture loading using `order` property.
 
 So let's say, we want to define Jane in separate file (she still must be loaded before John),
 and we added property `address` to `Person` and it also need to be loaded before the person.
@@ -176,7 +176,7 @@ Acme\DemoBundle\Entity\Address:
     data:
         john_doe_address:
             street: 123 Main St
-            city: Anytown
+            city: Any town
             postalCode: CA 01234-5678
 
 Acme\DemoBundle\Entity\Person:
@@ -192,7 +192,7 @@ Acme\DemoBundle\Entity\Address:
     data:
         john_doe_address:
             street: 321 Main St
-            city: Anytown
+            city: Any town
             postalCode: CA 01234-5678
 
 Acme\DemoBundle\Entity\Person:
@@ -213,7 +213,7 @@ we don't know, which one is loaded first, but that doesn't matter to us.
 
 **Fixtures without specified order are loader after all ordered fixtures.**
 
-## Postpersist actions
+## Post-persist actions
 
 It's possible to call one function on another object via reference with this object as the first parameter.
 You can specify more parameters if you wish.
@@ -260,7 +260,7 @@ Dor example let `Person` have field `birthDay` of type `DateTime`.
 As YaML only allows some types like arrays, strings and numbers, we need a way to transform them.
 
 First we need to define `DateTimeDataTransformer`
-implemeting `Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface`:
+implementing `Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface`:
 
 ``` php
 <?php
@@ -298,8 +298,8 @@ Acme\DemoBundle\Entity\Person:
 
 ## Using custom ObjectTransformer
 
-If the default transformation of data to database objects is not sufficiet,
-you can specify custom object transformer implemeting
+If the default transformation of data to database objects is not sufficient,
+you can specify custom object transformer implementing
 `Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface`.
 
 ``` yaml
