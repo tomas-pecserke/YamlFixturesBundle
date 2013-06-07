@@ -94,7 +94,8 @@ EOT
             }
         }
 
-        $fixturesData = (new YamlFixtureFileParser())->parse($fixtureFiles);
+        $parser = new YamlFixtureFileParser();
+        $fixturesData = $parser->parse($fixtureFiles);
         if (empty($fixturesData)) {
             $output->writeln('  <info>No fixtures to load</info>');
 

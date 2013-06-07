@@ -5,12 +5,9 @@ use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryObjectManager;
-use Pecserke\YamlFixturesBundle\Tests\Fixtures\AcmeDemoBundle\AcmeDemoBundle;
-use Pecserke\YamlFixturesBundle\Tests\Fixtures\app\TestKernel;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +17,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     private $container;
 
     /**
-     * @var YamlFixturesLoader
+     * @var ArrayFixturesLoader
      */
     private $loader;
 
@@ -165,7 +162,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'data' => array(
-                'example.object' => array('publicProperty' => '@reference_that_dont_exist')
+                'example.object' => array('publicProperty' => '@reference_that_does_not_exist')
             )
         );
         $this->loader->load($fixture, $this->manager);
@@ -259,7 +256,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testLoadPostPersistNotValidCallbackMetohd()
+    public function testLoadPostPersistNotValidCallbackMethod()
     {
         $referenceName = 'example.reference';
         $fixture = array(
@@ -336,7 +333,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
-            'equal_condition' => ['publicProperty'],
+            'equal_condition' => array('publicProperty'),
             'data' => array(
                 'example.object.2' => array(
                     'publicProperty' => 'value1',
@@ -360,7 +357,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
-            'equal_condition' => ['privateProperty'],
+            'equal_condition' => array('privateProperty'),
             'data' => array(
                 'example.object.2' => array(
                     'publicProperty' => 'value1',
@@ -382,7 +379,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
-            'equal_condition' => ['notExistProperty'],
+            'equal_condition' => array('notExistProperty'),
             'data' => array(
                 'example.object.2' => array(
                     'publicProperty' => 'value1',

@@ -78,11 +78,11 @@ class ArrayFixturesLoader implements ContainerAwareInterface
             $this->referenceRepository->addReference($referenceName, $object);
 
             if ($postPersist) {
-                $params = [$object];
+                $params = array($object);
                 if (!empty($postPersist[2])) {
                     $params = array_merge($params, $postPersist[2]);
                 }
-                $callback = [$postPersist[0], $postPersist[1]];
+                $callback = array($postPersist[0], $postPersist[1]);
                 call_user_func_array($callback, $params);
             }
         }
@@ -107,19 +107,19 @@ class ArrayFixturesLoader implements ContainerAwareInterface
             }
         }
 
-        foreach ($array as $key => &$value) {
+        foreach ($array as $key => $value) {
             if (is_string($value) && preg_match('/^([@#])[^\1]/', $value)) {
                 $substring = substr($value, 1);
                 switch ($value{0}) {
                     case '@':
-                        $value = $this->referenceRepository->getReference($substring);
+                        $array[$key] = $this->referenceRepository->getReference($substring);
                         break;
                     case '#':
-                        $value = $this->container->getParameter($substring);
+                        $array[$key] = $this->container->getParameter($substring);
                         break;
                 }
             } else if (is_array($value)) {
-                $value = $this->parse($value);
+                $array[$key] = $this->parse($value);
             }
         }
 
@@ -132,7 +132,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
 
     protected function getSame($object, array $equalCondition, ObjectManager $manager)
     {
-        $conditions = [];
+        $conditions = array();
         $accessor = PropertyAccess::createPropertyAccessor();
 
         foreach ($equalCondition as $property) {
