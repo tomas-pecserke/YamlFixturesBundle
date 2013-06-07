@@ -11,7 +11,7 @@ env:
 before_script:
     - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
     - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install --dev -n
+    - php composer.phar install --dev -n --prefer-dist
 
 notifications:
     email:
