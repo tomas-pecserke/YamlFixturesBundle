@@ -7,14 +7,9 @@ env:
     - SYMFONY_VERSION=2.3
 
 before_script:
-    # Set the GitHub OAuth token to make use of the 6000 per hour rate limit
-    - "mkdir -p ~/.composer"
-    - cp .travis.composer.config.json ~/.composer/config.json
-    # enable extentions
     - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    # install composer
     - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install --dev
+    - php composer.phar install --dev -n
 
 notifications:
     email:
