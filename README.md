@@ -1,5 +1,7 @@
 PecserkeYamlFixturesBundle
-=========================
+==========================
+
+[![Build Status](https://travis-ci.org/tomas-pecserke/YamlFixturesBundle.png?branch=symfony-2.2)](https://travis-ci.org/tomas-pecserke/YamlFixturesBundle)
 
 This bundle for Symfony 2 allows you to write your
 [Doctrine2 Data Fixtures](https://github.com/doctrine/data-fixtures) in [YaML](http://www.yaml.org/)
@@ -15,7 +17,7 @@ License
 
 This bundle is under the MIT license. See the complete license in the bundle:
 
-    Resources/meta/LICENSE
+    LICENSE
 
 Reporting an issue or a feature request
 ---------------------------------------
