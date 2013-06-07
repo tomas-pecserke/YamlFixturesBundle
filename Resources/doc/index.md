@@ -8,7 +8,7 @@ for the Doctrine ORM or ODM.
 
 ## Prerequisites
 
-This version of the bundle requires Symfony 2.0+ and [Composer](http://getcomposer.org/).
+This version of the bundle requires Symfony 2.3+ and [Composer](http://getcomposer.org/).
 
 ## Installation
 
