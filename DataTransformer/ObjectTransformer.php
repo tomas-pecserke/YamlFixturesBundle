@@ -26,7 +26,7 @@ class ObjectTransformer implements ObjectTransformerInterface
 
         $object = new $className();
 
-        $accessor = PropertyAccess::getPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($data as $property => $value) {
             $accessor->setValue($object, (string) $property, $value);
         }

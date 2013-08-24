@@ -2,6 +2,8 @@
 namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class InMemoryObjectManager implements ObjectManager
 {
@@ -9,9 +11,15 @@ class InMemoryObjectManager implements ObjectManager
 
     private $objects;
 
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
+
     public function __construct()
     {
         $this->objects = array();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     public function find($className, $id)
@@ -22,7 +30,7 @@ class InMemoryObjectManager implements ObjectManager
 
         if (array_key_exists($className, $this->objects)) {
             foreach ($this->objects[$className] as $object) {
-                if ($object->getId() === $id) {
+                if ($this->propertyAccessor->getValue($object, 'id') === $id) {
                     return $object;
                 }
             }
@@ -58,7 +66,7 @@ class InMemoryObjectManager implements ObjectManager
         $class = get_class($object);
         if (array_key_exists($class, $this->objects)) {
             foreach ($this->objects[$class] as $key => $o) {
-                if ($object->getId() === $o->getId()) {
+                if ($this->propertyAccessor->getValue($object, 'id') === $this->propertyAccessor->getValue($o, 'id')) {
                     unset($this->objects[$class][$key]);
                 }
             }

@@ -12,6 +12,16 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class ArrayFixturesLoader implements ContainerAwareInterface
 {
     /**
+     * @var string
+     */
+    const POST_PERSIST_ANNOTATION = '@postPersist';
+
+    /**
+     * @var string
+     */
+    const DATA_TRANSFORMER_ANNOTATION = '@dataTransformer';
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -50,20 +60,10 @@ class ArrayFixturesLoader implements ContainerAwareInterface
         }
 
         foreach ($fixture['data'] as $referenceName => $data) {
+            $postPersist = isset($data[self::POST_PERSIST_ANNOTATION]) ? $data[self::POST_PERSIST_ANNOTATION] : null;
+            unset($data[self::POST_PERSIST_ANNOTATION]);
+
             $data = $this->parse($data);
-
-            $postPersist = isset($data['@postPersist']) ? $data['@postPersist'] : null;
-            unset($data['@postPersist']);
-            if ($postPersist !== null) {
-                if (empty($postPersist[0]) || !is_object($postPersist[0])) {
-                    throw new \InvalidArgumentException('postPersist callback argument 1 must be an object');
-                } else if (empty($postPersist[1]) || !method_exists($postPersist[0], $postPersist[1])) {
-                    throw new \InvalidArgumentException(
-                        'postPersist callback argument 2 must be a method on argument 1 object'
-                    );
-                }
-            }
-
             $object = $transformer->transform($data, $fixture['class']);
 
             if (!empty($fixture['equal_condition'])) {
@@ -77,13 +77,34 @@ class ArrayFixturesLoader implements ContainerAwareInterface
             $manager->persist($object);
             $this->referenceRepository->addReference($referenceName, $object);
 
-            if ($postPersist) {
-                $params = array($object);
-                if (!empty($postPersist[2])) {
-                    $params = array_merge($params, $postPersist[2]);
+            if ($postPersist !== null) {
+                if (!is_array($postPersist)) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'invalid postPersist callback at "%s": array [$object, $method, $params] expected, %s given',
+                        $referenceName,
+                        gettype($postPersist)
+                    ));
+
                 }
-                $callback = array($postPersist[0], $postPersist[1]);
-                call_user_func_array($callback, $params);
+                $postPersist = $this->parse($postPersist);
+                if (!is_object($postPersist[0])) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'invalid postPersist callback at "%s": argument 1: object expected, %s given',
+                        $referenceName,
+                        gettype($postPersist[0])
+                    ));
+
+                }
+                if (!method_exists($postPersist[0], $postPersist[1])) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'invalid postPersist callback at "%s": method %s::%s does not exist',
+                        $referenceName,
+                        get_class($postPersist[0]),
+                        $postPersist[1]
+                    ));
+                }
+
+                call_user_func_array(array($postPersist[0], $postPersist[1]), $postPersist[2]);
             }
         }
 
@@ -92,8 +113,8 @@ class ArrayFixturesLoader implements ContainerAwareInterface
 
     protected function parse(array $array)
     {
-        $dataTransformer = !empty($array['@dataTransformer']) ? $array['@dataTransformer'] : null;
-        unset($array['@dataTransformer']);
+        $dataTransformer = !empty($array[self::DATA_TRANSFORMER_ANNOTATION]) ? $array[self::DATA_TRANSFORMER_ANNOTATION] : null;
+        unset($array[self::DATA_TRANSFORMER_ANNOTATION]);
         if ($dataTransformer !== null) {
             $dataTransformer = $dataTransformer{0} == '@' ?
                 $this->container->get(substr($dataTransformer, 1)) :

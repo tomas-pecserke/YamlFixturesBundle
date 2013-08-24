@@ -19,6 +19,7 @@
     "require": {
         "php": ">=5.3.3",
         "doctrine/data-fixtures": "1.*@alpha",
+        "symfony/framework-bundle": ">=2.3,<2.4",
         "symfony/http-kernel": ">=2.3,<2.4",
         "symfony/dependency-injection": ">=2.3,<2.4",
         "symfony/config": ">=2.3,<2.4",

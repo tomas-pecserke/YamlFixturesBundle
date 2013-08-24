@@ -66,6 +66,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(count($fixture['data']), $objects);
 
         foreach ($fixture['data'] as $key => $value) {
+            /* @var ExampleObject $object */
             $object = $objects[$key{strlen($key) - 1}];
 
             $this->assertInstanceOf($fixture['class'], $object);
@@ -223,7 +224,11 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
-                    '@postPersist' => array('@example.reference', 'setPrivatePropertyWithSetMethod')
+                    '@postPersist' => array(
+                        '@example.reference',
+                        'setPrivatePropertyWithSetMethod',
+                        array('@example.object')
+                    )
                 )
             )
         );
@@ -237,6 +242,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage object expected
      */
     public function testLoadPostPersistNotValidCallback()
     {
@@ -255,6 +261,26 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage array [$object, $method, $params] expected
+     */
+    public function testLoadPostPersistNotValidCallbackType()
+    {
+        $fixture = array(
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'data' => array(
+                'example.object' => array(
+                    'publicProperty' => 'value',
+                    '@postPersist' => 'invalid_callback'
+                )
+            )
+        );
+
+        $this->loader->load($fixture, $this->manager);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage does not exist
      */
     public function testLoadPostPersistNotValidCallbackMethod()
     {
@@ -264,7 +290,11 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
-                    '@postPersist' => array("$referenceName", 'setPrivateProperty')
+                    '@postPersist' => array(
+                        '@'. $referenceName,
+                        'setPrivateProperty',
+                        array('@example.object')
+                    )
                 )
             )
         );

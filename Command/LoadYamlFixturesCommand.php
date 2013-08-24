@@ -18,9 +18,12 @@ use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLocator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class LoadYamlFixturesCommand extends ContainerAwareCommand
 {
@@ -63,13 +66,18 @@ EOT
         }
 
         if ($input->isInteractive() && !$input->getOption('append')) {
+            /* @var DialogHelper $dialog */
             $dialog = $this->getHelperSet()->get('dialog');
             if (!$dialog->askConfirmation($output, '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>', false)) {
                 return;
             }
         }
 
-        $fixtureLocator = new YamlFixturesLocator($this->getApplication()->getKernel());
+        /* @var Application $app */
+        $app = $this->getApplication();
+        /* @var Kernel $kernel */
+        $kernel = $app->getKernel();
+        $fixtureLocator = new YamlFixturesLocator($kernel);
 
         $dirOrFile = $input->getOption('fixtures');
         $fixtureFiles = array();
@@ -89,7 +97,7 @@ EOT
                 );
             }
         } else {
-            foreach ($this->getApplication()->getKernel()->getBundles() as $bundle) {
+            foreach ($kernel->getBundles() as $bundle) {
                 $fixtureFiles = array_merge($fixtureFiles, $fixtureLocator->findInBundle($bundle->getName()));
             }
         }

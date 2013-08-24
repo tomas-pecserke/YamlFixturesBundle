@@ -8,7 +8,7 @@ for the Doctrine ORM or ODM.
 
 ## Prerequisites
 
-This version of the bundle requires Symfony 2.3+ and [Composer](http://getcomposer.org/).
+This version of the bundle requires [Symfony 2.3+](http://symfony.com) and [Composer](http://getcomposer.org/).
 
 ## Installation
 
@@ -140,7 +140,8 @@ Reference is a named entity / document. Sometimes you need to use an object as a
 Keys in `data` array are reference names which are assigned to each object.
 In previous example it was `john_doe` and `jane_doe`.
 
-Now let's say a `Person` has property `mate` and we want to specify Jane as John's mate (only one way for now).
+Now let's say a `Person` has property `mate` and we want to specify Jane as John's mate
+(as unidirectional association for now).
 
 ``` yaml
 Acme\DemoBundle\Entity\Person:
@@ -174,7 +175,7 @@ and we added property `address` to `Person` and it also need to be loaded before
 Acme\DemoBundle\Entity\Address:
     order: 1
     data:
-        john_doe_address:
+        address:
             street: 123 Main St
             city: Any town
             postalCode: CA 01234-5678
@@ -185,16 +186,9 @@ Acme\DemoBundle\Entity\Person:
         jane_doe:
             firstName: Jane
             lastName: Doe
+            address: '@address'
 
 # person_2.yml
-Acme\DemoBundle\Entity\Address:
-    order: 1
-    data:
-        john_doe_address:
-            street: 321 Main St
-            city: Any town
-            postalCode: CA 01234-5678
-
 Acme\DemoBundle\Entity\Person:
     order: 3
     data:
@@ -202,23 +196,19 @@ Acme\DemoBundle\Entity\Person:
             firstName: John
             lastName: Doe
             mate: '@jane_doe'
-            address: '@john_doe_address'
+            address: '@address'
 ```
-
-In this example the addresses are loaded first. Since they have same order,
-we don't know, which one is loaded first, but that doesn't matter to us.
 
 **Order in which fixtures with same value of `order` property and different class
 (or specified in different files) is not specified.**
 
-**Fixtures without specified order are loader after all ordered fixtures.**
+**Fixtures without specified order are loader after ordered fixtures.**
 
-## Post-persist actions
+## Post-persist callback
 
-It's possible to call one function on another object via reference with this object as the first parameter.
-You can specify more parameters if you wish.
+It's possible to call function on different persisted object via reference after the current one has been persisted.
 
-This is how wen can solve our problem with both ways `mate` association between John and Jane.
+This is how we can solve our problem with both ways `mate` association between John and Jane.
 
 ``` yaml
 Acme\DemoBundle\Entity\Person:
@@ -230,10 +220,13 @@ Acme\DemoBundle\Entity\Person:
             firstName: John
             lastName: Doe
             mate: '@jane_doe'
-            '@postPersist': [ '@jane_doe', 'setMate', [ <more parameters> ] ] # 3rd parameter is optional
+            '@postPersist': [ '@jane_doe', 'setMate', [ '@john_doe' ] ]
 ```
 
-## Preventing duplicate entries when loading fixtures without purging database
+**Since the callback is called after the current entity / document has been persisted,
+the reference to is already available.**
+
+## Preventing duplicate entries
 
 If you don't purge DB before loading fixtures (which you don't want to do in production environment),
 you need a way, how to avoid duplicates. That's where yo use property `equal_condition`.

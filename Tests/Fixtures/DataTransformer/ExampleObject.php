@@ -37,4 +37,9 @@ class ExampleObject
     {
         $this->privatePropertyWithAddMethod = $privatePropertyWithAddMethod;
     }
+
+    protected function getPrivateProperty()
+    {
+        return $this->privateProperty;
+    }
 }
