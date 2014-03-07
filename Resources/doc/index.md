@@ -263,7 +263,7 @@ use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface
 
 class DateTimeDataTransformer implements DataTransformerInterface
 {
-    public function($data)
+    public function transform($data)
     {
         return new \DateTime($data['date_time']);
     }
