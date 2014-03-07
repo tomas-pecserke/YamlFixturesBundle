@@ -131,7 +131,7 @@ Property `data` contains data, that will be transformed into database objects.
 YaML fixtures are loaded in similar way to ordinary fixtures:
 
 ``` shell
-$ php app/console pecserke:fixtures:load
+$ php app/console pecserke:fixtures:yml:load
 ```
 
 ## Using references
@@ -259,7 +259,7 @@ implementing `Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterfa
 <?php
 namespace Acme\DemoBundle\DataTransformer;
 
-use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface
+use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
 
 class DateTimeDataTransformer implements DataTransformerInterface
 {
