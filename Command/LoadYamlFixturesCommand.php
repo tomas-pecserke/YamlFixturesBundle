@@ -42,7 +42,7 @@ The <info>pecserke:fixtures:yml:load</info> command loads YaML fixtures from you
 
 You can also optionally specify the path to fixtures with the <info>--fixtures</info> option:
 
-  <info>./app/console doctrine:fixtures:load --fixtures=/path/to/fixtures1 --fixtures=/path/to/fixtures2</info>
+  <info>./app/console pecserke:fixtures:yml:load --fixtures=/path/to/fixtures1 --fixtures=/path/to/fixtures2</info>
 
 If you want to append the fixtures instead of flushing the database first you can use the <info>--append</info> option:
 
