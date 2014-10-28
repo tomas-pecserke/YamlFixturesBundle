@@ -8,12 +8,13 @@ php:
 
 env:
     - SYMFONY_VERSION=2.3
-    - SYMFONY_VERSION=v2.4.0-BETA2
+    - SYMFONY_VERSION=2.4
+    - SYMFONY_VERSION=2.5
 
 before_script:
     - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
-    - curl -s http://getcomposer.org/installer | php
-    - php composer.phar require symfony/framework-bundle:${SYMFONY_VERSION} --prefer-source
+    - if [ $(php -v | grep '5.3.3' -c) -ne 0 ]; then export PREFER="--prefer-source"; else PREFER="--prefer-dist"; fi
+    - composer require symfony/framework-bundle:${SYMFONY_VERSION} ${PREFER} --no-interaction --no-progress
 
 notifications:
     email:
