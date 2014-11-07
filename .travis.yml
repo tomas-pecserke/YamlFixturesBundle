@@ -25,7 +25,7 @@ before_script:
         else
             echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
         fi
-    - |if [ $(php -v | grep '5.3.3' -c) -ne 0 ]; then export PREFER="--prefer-source"; else PREFER="--prefer-dist"; fi
+    - if [ $(php -v | grep '5.3.3' -c) -ne 0 ]; then export PREFER="--prefer-source"; else PREFER="--prefer-dist"; fi
     - composer require symfony/framework-bundle:${SYMFONY_VERSION} ${PREFER} --no-interaction --no-progress
 
 notifications:
