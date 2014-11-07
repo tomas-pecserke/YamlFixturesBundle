@@ -11,6 +11,6 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
     public function testParseThrowsConfigurationNotFundExceptionIfYamlFileIsEmpty()
     {
         $parser = new YamlFixtureFileParser();
-        $parser->parse(['']);
+        $parser->parse(array(''));
     }
 }
