@@ -86,7 +86,7 @@ EOT
             foreach ($paths as $path) {
                 if (is_dir($path)) {
                     $fixtureFiles = array_merge($fixtureFiles, $fixtureLocator->findInDirectory($path));
-                } else if (strripos($path, '.yml') === 0 && !is_dir($path)) {
+                } else {
                     $fixtureFiles[] = $path;
                 }
             }
