@@ -34,7 +34,7 @@ class YamlFixturesLocator
         }
 
         $finder = new Finder();
-        $finder->files()->name('*.yml')->in($directory);
+        $finder->files()->name('*.yml')->in($directory)->sortByName();
 
         return array_map(
             function(SplFileInfo $file) {
