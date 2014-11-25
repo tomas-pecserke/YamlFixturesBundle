@@ -63,7 +63,7 @@ class YamlFixturesLocator
         $bundleFixtureFiles = array();
         if (is_dir($bundleDir)) {
             $finder = new Finder();
-            $finder->files()->name('*.yml')->in($bundleDir);
+            $finder->files()->name('*.yml')->in($bundleDir)->sortByName();
             /* @var SplFileInfo $file */
             foreach ($finder as $file) {
                 $overrideFilename = $appDir . DIRECTORY_SEPARATOR . $file->getRelativePathname();
@@ -75,7 +75,7 @@ class YamlFixturesLocator
 
         if (is_dir($appDir)) {
             $finder = new Finder();
-            $finder->files()->name('*.yml')->in($appDir);
+            $finder->files()->name('*.yml')->in($appDir)->sortByName();
             /* @var SplFileInfo $file */
             foreach ($finder as $file) {
                 $bundleFixtureFiles[] = $file->getPathname();
