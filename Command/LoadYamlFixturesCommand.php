@@ -13,6 +13,11 @@ namespace Pecserke\YamlFixturesBundle\Command;
 
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ODM\MongoDB\DocumentManager as MongoDbDocumentManage;
+use Doctrine\ODM\PHPCR\DocumentManager as PhpCrDocumentManage;
+use Doctrine\ORM\EntityManager;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
@@ -27,15 +32,8 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class LoadYamlFixturesCommand extends ContainerAwareCommand
 {
-    protected function configure()
-    {
-        $this
-            ->setName('pecserke:fixtures:yml:load')
-            ->setDescription('Load YaML fixtures to your database.')
-            ->addOption('fixtures', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The directory or file to load YaML fixtures from.')
-            ->addOption('append', null, InputOption::VALUE_NONE, 'Append the fixtures instead of deleting all data from the database first.')
-            ->addOption('purge-with-truncate', null, InputOption::VALUE_NONE, 'Purge data by using a database-level TRUNCATE statement')
-            ->setHelp(<<<EOT
+    const PURGE_CONFIRMATION = '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>';
+    const HELP = <<<EOT
 The <info>pecserke:fixtures:yml:load</info> command loads YaML fixtures from your bundles:
 
   <info>./app/console pecserke:fixtures:yml:load</info>
@@ -52,58 +50,28 @@ By default Pecserke YaML Fixtures uses DELETE statements to drop the existing ro
 the database. If you want to use a TRUNCATE statement instead you can use the <info>--purge-with-truncate</info> flag:
 
   <info>./app/console pecserke:fixtures:yml:load --purge-with-truncate</info>
-EOT
-            )
-        ;
+EOT;
+
+    private $supportedDoctrines = array('doctrine', 'doctrine_mongodb', 'doctrine_phpcr');
+
+    protected function configure()
+    {
+        $this
+            ->setName('pecserke:fixtures:yml:load')
+            ->setDescription('Load YaML fixtures to your database.')
+            ->addOption('fixtures', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The directory or file to load YaML fixtures from.')
+            ->addOption('append', null, InputOption::VALUE_NONE, 'Append the fixtures instead of deleting all data from the database first.')
+            ->addOption('purge-with-truncate', null, InputOption::VALUE_NONE, 'Purge data by using a database-level TRUNCATE statement')
+            ->setHelp(self::HELP);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $orm = $this->getContainer()->has('doctrine') ? $this->getContainer()->get('doctrine') : null;
-        $odm = $this->getContainer()->has('doctrine_mongodb') ? $this->getContainer()->get('doctrine_mongodb') : null;
-        if ($orm === null && $odm === null) {
-            throw new \InvalidArgumentException('doctrine ORM nor ODM is defined');
+        if (!$this->verifyDoctrine()) {
+            throw new \InvalidArgumentException('no doctrine ORM nor ODM is defined');
         }
 
-        if ($input->isInteractive() && !$input->getOption('append')) {
-            /* @var DialogHelper $dialog */
-            $dialog = $this->getHelperSet()->get('dialog');
-            if (!$dialog->askConfirmation($output, '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>', false)) {
-                return;
-            }
-        }
-
-        /* @var Application $app */
-        $app = $this->getApplication();
-        /* @var Kernel $kernel */
-        $kernel = $app->getKernel();
-        $fixtureLocator = new YamlFixturesLocator($kernel);
-
-        $dirOrFile = $input->getOption('fixtures');
-        $fixtureFiles = array();
-        if ($dirOrFile) {
-            $paths = is_array($dirOrFile) ? $dirOrFile : array($dirOrFile);
-            foreach ($paths as $path) {
-                if (is_dir($path)) {
-                    $fixtureFiles = array_merge($fixtureFiles, $fixtureLocator->findInDirectory($path));
-                } else {
-                    $fixtureFiles[] = $path;
-                }
-            }
-
-            if (empty($fixtureFiles)) {
-                throw new \InvalidArgumentException(
-                    sprintf('Could not find any YaML fixtures files to load in: %s', "\n\n- ".implode("\n- ", $paths))
-                );
-            }
-        } else {
-            foreach ($kernel->getBundles() as $bundle) {
-                $fixtureFiles = array_merge($fixtureFiles, $fixtureLocator->findInBundle($bundle->getName()));
-            }
-        }
-
-        $parser = new YamlFixtureFileParser();
-        $fixturesData = $parser->parse($fixtureFiles);
+        $fixturesData = $this->loadFixtureData($input->getOption('fixtures'));
         if (empty($fixturesData)) {
             $output->writeln('  <info>No fixtures to load</info>');
 
@@ -111,20 +79,145 @@ EOT
         }
 
         if (!$input->getOption('append')) {
-            $ormPurger = new ORMPurger();
-            $truncate = $input->getOption('purge-with-truncate');
-            $ormPurger->setPurgeMode($truncate ? ORMPurger::PURGE_MODE_TRUNCATE : ORMPurger::PURGE_MODE_DELETE);
-            foreach (($orm !== null ? $orm->getManagers() : array()) as $em) {
-                $ormPurger->setEntityManager($em);
-                $ormPurger->purge();
+            if ($input->isInteractive()) {
+                /* @var DialogHelper $dialog */
+                $dialog = $this->getHelperSet()->get('dialog');
+                if (!$dialog->askConfirmation($output, self::PURGE_CONFIRMATION, false)) {
+                    return;
+                }
             }
+            if (!$dialog->askConfirmation($output, '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>', false)) {
+                return;
+            }
+            $this->purge($input->getOption('purge-with-truncate'));
+        }
+        $this->loadFixtures($output, $fixturesData);
+    }
 
-            $odmPurger = new MongoDBPurger();
-            foreach (($odm !== null ? $odm->getManagers() : array()) as $dm) {
-                $odmPurger->setDocumentManager($dm);
-                $odmPurger->purge();
+    /**
+     * @return bool
+     */
+    private function verifyDoctrine()
+    {
+        foreach ($this->supportedDoctrines as $service) {
+            if ($this->getContainer()->has($service)) {
+                return true;
             }
         }
+
+        return false;
+    }
+
+    /**
+     * @param array|string|null $fixtures
+     * @return array
+     */
+    private function loadFixtureData($fixtures)
+    {
+        $fixtureFiles = $this->locateFixtureFiles($fixtures);
+        $parser = new YamlFixtureFileParser();
+
+        return $parser->parse($fixtureFiles);
+    }
+
+    /**
+     * @param array|string|null $fixturePaths
+     * @return array
+     */
+    private function locateFixtureFiles($fixturePaths)
+    {
+        if (empty($fixturePaths)) {
+            return $this->locateFixtureFilesInBundles();
+        }
+
+        $fixturePaths = is_array($fixturePaths) ? $fixturePaths : array($fixturePaths);
+        $fixtureFiles = $this->locateFixtureFilesInDirs($fixturePaths);
+        if (empty($fixtureFiles)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Could not find any YaML fixtures files to load in: %s',
+                "\n\n- " . implode("\n- ", $fixturePaths)
+            ));
+        }
+
+        return $fixtureFiles;
+    }
+
+    /**
+     * @param array $fixturePaths
+     * @return array
+     */
+    private function locateFixtureFilesInDirs(array $fixturePaths)
+    {
+        $fixtureFiles = array();
+        $fixtureLocator = new YamlFixturesLocator();
+        foreach ($fixturePaths as $path) {
+            if (is_dir($path)) {
+                $fixtureFiles = array_merge($fixtureFiles, $fixtureLocator->findInDirectory($path));
+            } else {
+                $fixtureFiles[] = $path;
+            }
+        }
+
+        return $fixtureFiles;
+    }
+
+    /**
+     * @return array
+     */
+    private function locateFixtureFilesInBundles()
+    {
+        /* @var Application $app */
+        $app = $this->getApplication();
+        /* @var Kernel $kernel */
+        $kernel = $app->getKernel();
+        $fixtureLocator = new YamlFixturesLocator($kernel);
+
+        $fixtureFiles = array();
+        foreach ($kernel->getBundles() as $bundle) {
+            $fixtureFiles[] = $fixtureLocator->findInBundle($bundle->getName());
+        }
+
+        return call_user_func_array('array_merge', $fixtureFiles);
+    }
+
+    /**
+     * @param bool $truncate
+     */
+    private function purge($truncate)
+    {
+        $managers = array();
+        foreach ($this->getDoctrines() as $doctrine) {
+            $managers[] = $doctrine->getManagers();
+        }
+        $managers = call_user_func_array('array_merge', $managers);
+
+        $ormPurger = new ORMPurger();
+        if ($truncate) {
+            $ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
+        }
+        $mongodbPurger = new MongoDBPurger();
+        $phpcrPurger = new PHPCRPurger();
+
+        foreach ($managers as $manager) {
+            if ($manager instanceof EntityManager) {
+                $ormPurger->setEntityManager($manager);
+                $ormPurger->purge();
+            } else if ($manager instanceof MongoDbDocumentManage) {
+                $mongodbPurger->setDocumentManager($manager);
+                $mongodbPurger->purge();
+            } else if ($manager instanceof PhpCrDocumentManage) {
+                $phpcrPurger->setDocumentManager($manager);
+                $phpcrPurger->purge();
+            }
+
+            throw new \UnexpectedValueException('unsupported ObjectManager');
+        }
+    }
+
+    private function loadFixtures(OutputInterface $output, array $fixturesData)
+    {
+        $orm = $this->getContainer()->has('doctrine') ? $this->getContainer()->get('doctrine') : null;
+        $odm = $this->getContainer()->has('doctrine_mongodb') ? $this->getContainer()->get('doctrine_mongodb') : null;
 
         $loader = new ArrayFixturesLoader();
         $loader->setContainer($this->getContainer());
@@ -151,5 +244,21 @@ EOT
                 $loader->load($fixture, $om);
             }
         }
+    }
+
+    /**
+     * @return ManagerRegistry[]
+     */
+    private function getDoctrines()
+    {
+        $doctrines = array();
+        $container = $this->getContainer();
+        foreach ($this->supportedDoctrines as $service) {
+            if ($container->has($service)) {
+                $doctrines[] = $container->get($service);
+            }
+        }
+
+        return $doctrines;
     }
 }

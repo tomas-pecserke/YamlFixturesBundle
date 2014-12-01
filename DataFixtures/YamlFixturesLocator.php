@@ -15,7 +15,7 @@ class YamlFixturesLocator
     /**
      * @param Kernel $kernel
      */
-    public function __construct(Kernel $kernel)
+    public function __construct(Kernel $kernel = null)
     {
         $this->kernel = $kernel;
     }
@@ -52,11 +52,15 @@ class YamlFixturesLocator
      * Those under application root path take precedents over those under bundle path.
      *
      * @param string $bundleName
-     * @throws \InvalidArgumentException
+     * @throws \BadMethodCallException
      * @return array
      */
     public function findInBundle($bundleName)
     {
+        if ($this->kernel === null) {
+            throw new \BadMethodCallException('no kernel');
+        }
+
         $bundleDir = $this->kernel->getBundle($bundleName)->getPath() . '/Resources/fixtures';
         $appDir = $this->kernel->getRootDir() . '/Resources/' . $bundleName . '/fixtures';
 

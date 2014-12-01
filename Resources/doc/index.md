@@ -123,6 +123,8 @@ It's also possible to place your YaML fixtures into `app/Resources/YourBundleNam
 In that case all files with same filename in in your bundle's `Resources/fixtures` directory
 will be "overridden" by those from `app/Resources`. No merging is done.
 
+**Fixture files can also be defined in subdirectories to form some logical structure.**
+
 Property `data` contains data, that will be transformed into database objects.
 **Property of object must be public or accessible via setter method.**
 
@@ -140,7 +142,7 @@ Reference is a named entity / document. Sometimes you need to use an object as a
 Keys in `data` array are reference names which are assigned to each object.
 In previous example it was `john_doe` and `jane_doe`.
 
-Now let's say a `Person` has property `mate` and we want to specify Jane as John's mate
+Now let's say a `Person` has property `friend` and we want to specify Jane as John's friend
 (as unidirectional association for now).
 
 ``` yaml
@@ -152,7 +154,7 @@ Acme\DemoBundle\Entity\Person:
         john_doe:
             firstName: John
             lastName: Doe
-            mate: '@jane_doe'
+            friend: '@jane_doe'
 ```
 
 Notice `jane_doe` is defined as first.
@@ -162,17 +164,56 @@ we need the referenced one to be already loaded**.
 ## Ordering fixtures
 
 As you can see, we often need a way to ensure order in which the fixtures are loaded.
-The fixtures of same class in one file are loaded in same order, in which they are defined in YaML file.
-We can control the order of fixture loading using `order` property.
+There are teo ways of ordering fixtures: by definition order and using `order` property (recommended).
 
-So let's say, we want to define Jane in separate file (she still must be loaded before John),
-and we added property `address` to `Person` and it also need to be loaded before the person.
+### Ordering fixtures by definition order
 
-**The `order` property is respected across all fixture files.**
+This ordering mode depends on fixture file names (alphabetically) and order of definitions in those files.
+
+So let's say, we want Jane to be loaded before John), and we added property `address` to `Person`,
+that we also need to be loaded before the respective person.
 
 ``` yaml
-# person_1.yml
+# 01_address.yml
 Acme\DemoBundle\Entity\Address:
+    data:
+        address:
+            street: 123 Main St
+            city: Any town
+            postalCode: CA 01234-5678
+
+# 02_person.yml
+Acme\DemoBundle\Entity\Person:
+    data:
+        jane_doe:
+            firstName: Jane
+            lastName: Doe
+            address: '@address'
+        john_doe:
+            firstName: John
+            lastName: Doe
+            friend: '@jane_doe'
+            address: '@address'
+```
+
+**Only part of path name relative to fixture dir is considered during ordering fixture files inside bundle.
+This is relevant since fixtures can also be define in `app/Resources` directory.**
+
+### Ordering fixtures using `order` property
+
+We can control the order of fixture loading using `order` property.
+**The `order` property is respected across all fixture files.**
+**Fixtures without specified order are loader after ordered fixtures.**
+
+The `order` property is the only way how to assure specific loading order across bundles. 
+
+Let's have a look how to solve same problem we solved previously be definition ordering,
+but now we have definitions in different bundles.
+
+
+``` yaml
+# src/Acme/ContactBundle/Resources/fixtures/address.yml
+Acme\ContactBundle\Entity\Address:
     order: 1
     data:
         address:
@@ -180,7 +221,8 @@ Acme\DemoBundle\Entity\Address:
             city: Any town
             postalCode: CA 01234-5678
 
-Acme\DemoBundle\Entity\Person:
+# src/Acme/PersonBundle/Resources/fixtures/person_jane.yml
+Acme\PersonBundle\Entity\Person:
     order: 2
     data:
         jane_doe:
@@ -188,27 +230,27 @@ Acme\DemoBundle\Entity\Person:
             lastName: Doe
             address: '@address'
 
-# person_2.yml
-Acme\DemoBundle\Entity\Person:
+# app/Resources/AcmePersonBundle/fixtures/person_john.yml
+Acme\PersonBundle\Entity\Person:
     order: 3
     data:
         john_doe:
             firstName: John
             lastName: Doe
-            mate: '@jane_doe'
+            friend: '@jane_doe'
             address: '@address'
 ```
 
-**Order in which fixtures with same value of `order` property and different class
-(or specified in different files) is not specified.**
+**Order in which fixtures with same value of `order` property and different class,
+and/or specified in different files is not specified.**
 
-**Fixtures without specified order are loader after ordered fixtures.**
+**Unordered fixtures still use definition ordering.**
 
 ## Post-persist callback
 
 It's possible to call function on different persisted object via reference after the current one has been persisted.
 
-This is how we can solve our problem with both ways `mate` association between John and Jane.
+This is how we can solve our problem with both ways `friend` association between John and Jane.
 
 ``` yaml
 Acme\DemoBundle\Entity\Person:
@@ -219,8 +261,8 @@ Acme\DemoBundle\Entity\Person:
         john_doe:
             firstName: John
             lastName: Doe
-            mate: '@jane_doe'
-            '@postPersist': [ '@jane_doe', 'setMate', [ '@john_doe' ] ]
+            friend: '@jane_doe'
+            '@postPersist': [ '@jane_doe', 'addFriend', [ '@john_doe' ] ]
 ```
 
 **Since the callback is called after the current entity / document has been persisted,
