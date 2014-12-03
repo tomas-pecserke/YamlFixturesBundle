@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository as BaseReferenceRepository;
@@ -11,6 +21,12 @@ class ReferenceRepository extends BaseReferenceRepository
     {
     }
 
+    /**
+     * @param string $name
+     * @return object
+     *
+     * @throws \OutOfBoundsException
+     */
     public function getReference($name)
     {
         if (isset($this->references[$name])) {
@@ -21,7 +37,7 @@ class ReferenceRepository extends BaseReferenceRepository
             return $identities[$name];
         }
 
-        throw new \InvalidArgumentException("reference '$name' doesn't exist");
+        throw new \OutOfBoundsException("reference '$name' doesn't exist");
     }
 
     public function setReference($name, $reference)

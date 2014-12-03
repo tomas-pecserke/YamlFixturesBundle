@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures;
 
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
@@ -156,7 +166,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \OutOfBoundsException
      */
     public function testLoadReferenceNotExist()
     {
