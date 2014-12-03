@@ -16,7 +16,7 @@ env:
 
 before_install:
     - sudo apt-get update -qq
-    - sudo apt-get install -y hhvm-dev
+    - sudo apt-get install -y hhvm-dev g++
 
 before_script:
     - bin/ci/install_mongo.sh
