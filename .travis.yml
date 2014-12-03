@@ -20,7 +20,9 @@ env:
 
 before_install:
     - if (php --version | grep -i HipHop > /dev/null); then sudo bin/ci/install_g++.sh; fi
-    - if (php --version | grep -i HipHop > /dev/null); then sudo touch /etc/hhvm/php.ini; sudo chmod ugo +rw /etc/hhvm/php.ini; fi
+    - sudo mkdir /etc/hhvm -p
+    - sudo touch /etc/hhvm/php.ini
+    - sudo chmod ugo +rw /etc/hhvm/php.ini
 
 before_script:
     - bin/ci/install_mongo.sh
