@@ -36,12 +36,13 @@ class FileSystemLocatorTest extends \PHPUnit_Framework_TestCase
         mkdir($this->rootDir . '2/1', 0777, true);
         mkdir($this->rootDir . '2/3', 0777, true);
 
-        touch($this->rootDir . '2/3/1.yml');
-        touch($this->rootDir . '2/1/2.yml');
-        touch($this->rootDir . '1.yml');
-        touch($this->rootDir . '2/2.yml');
-        touch($this->rootDir . '3.yml');
-        touch($this->rootDir . '2/1/1.yml');
+        // cannot use touch, because it's only supported with wrappers (such as vfs uses) since PHP 5.4
+        file_put_contents($this->rootDir . '2/3/1.yml', '');
+        file_put_contents($this->rootDir . '2/1/2.yml', '');
+        file_put_contents($this->rootDir . '1.yml', '');
+        file_put_contents($this->rootDir . '2/2.yml', '');
+        file_put_contents($this->rootDir . '3.yml', '');
+        file_put_contents($this->rootDir . '2/1/1.yml', '');
 
         $this->assertEquals(
             array(

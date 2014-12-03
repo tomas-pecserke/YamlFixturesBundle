@@ -68,11 +68,12 @@ class BundleResourceLocatorTest extends \PHPUnit_Framework_TestCase
     {
         mkdir($this->bundleFixturesDir . '3');
 
-        touch($this->bundleFixturesDir . '3/3.yml');
-        touch($this->bundleFixturesDir . '2.yml');
-        touch($this->appBundleFixturesDir . '2.yml');
-        touch($this->appBundleFixturesDir . '4.yml');
-        touch($this->bundleFixturesDir . '1.yml');
+        // cannot use touch, because it's only supported with wrappers (such as vfs uses) since PHP 5.4
+        file_put_contents($this->bundleFixturesDir . '3/3.yml', '');
+        file_put_contents($this->bundleFixturesDir . '2.yml', '');
+        file_put_contents($this->appBundleFixturesDir . '2.yml', '');
+        file_put_contents($this->appBundleFixturesDir . '4.yml', '');
+        file_put_contents($this->bundleFixturesDir . '1.yml', '');
 
         $this->assertEquals(
             array(
