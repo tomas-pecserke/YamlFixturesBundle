@@ -15,7 +15,6 @@ env:
     - SYMFONY_VERSION=2.6
 
 before_script:
-    - bin/ci/install_mongo.sh
     - if [ $(php -v | grep '5.3.3' -c) -ne 0 ]; then export PREFER="--prefer-source"; else PREFER="--prefer-dist"; fi
     - composer require symfony/framework-bundle:${SYMFONY_VERSION} ${PREFER} --no-interaction --no-progress
 
