@@ -3,7 +3,7 @@
 /*
  * This file is part of the Pecserke YamlFixtures Bundle.
  *
- * (c) Tomáš Pecsérke <tomas@pecserke.eu>
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,9 +19,10 @@ use Doctrine\ODM\MongoDB\DocumentManager as MongoDbDocumentManage;
 use Doctrine\ODM\PHPCR\DocumentManager as PhpCrDocumentManage;
 use Doctrine\ORM\EntityManager;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
+use Pecserke\YamlFixturesBundle\DataFixtures\Locator\BundleResourcesLocator;
+use Pecserke\YamlFixturesBundle\DataFixtures\Locator\FilesystemLocator;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
-use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLocator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +33,6 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class LoadYamlFixturesCommand extends ContainerAwareCommand
 {
-    const PURGE_CONFIRMATION = '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>';
     const HELP = <<<EOT
 The <info>pecserke:fixtures:yml:load</info> command loads YaML fixtures from your bundles:
 
@@ -51,6 +51,7 @@ the database. If you want to use a TRUNCATE statement instead you can use the <i
 
   <info>./app/console pecserke:fixtures:yml:load --purge-with-truncate</info>
 EOT;
+    const PURGE_CONFIRMATION = '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>';
 
     private $supportedDoctrines = array('doctrine', 'doctrine_mongodb', 'doctrine_phpcr');
 
@@ -85,9 +86,6 @@ EOT;
                 if (!$dialog->askConfirmation($output, self::PURGE_CONFIRMATION, false)) {
                     return;
                 }
-            }
-            if (!$dialog->askConfirmation($output, '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>', false)) {
-                return;
             }
             $this->purge($input->getOption('purge-with-truncate'));
         }
@@ -149,10 +147,10 @@ EOT;
     private function locateFixtureFilesInDirs(array $fixturePaths)
     {
         $fixtureFiles = array();
-        $fixtureLocator = new YamlFixturesLocator();
+        $fixtureLocator = new FilesystemLocator();
         foreach ($fixturePaths as $path) {
             if (is_dir($path)) {
-                $fixtureFiles = array_merge($fixtureFiles, $fixtureLocator->findInDirectory($path));
+                $fixtureFiles = array_merge($fixtureFiles, $fixtureLocator->find($path));
             } else {
                 $fixtureFiles[] = $path;
             }
@@ -170,11 +168,11 @@ EOT;
         $app = $this->getApplication();
         /* @var Kernel $kernel */
         $kernel = $app->getKernel();
-        $fixtureLocator = new YamlFixturesLocator($kernel);
+        $fixtureLocator = new BundleResourcesLocator($kernel);
 
         $fixtureFiles = array();
         foreach ($kernel->getBundles() as $bundle) {
-            $fixtureFiles[] = $fixtureLocator->findInBundle($bundle->getName());
+            $fixtureFiles[] = $fixtureLocator->find($bundle->getName());
         }
 
         return call_user_func_array('array_merge', $fixtureFiles);

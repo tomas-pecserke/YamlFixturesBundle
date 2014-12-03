@@ -8,35 +8,38 @@
     "authors": [
         {
             "name": "Tomáš Pecsérke",
-            "email": "tomas@pecserke.eu",
-            "role": "Developer"
+            "email": "tomas.pecserke@gmail.com"
         }
     ],
     "autoload": {
-        "psr-0": { "Pecserke\\YamlFixturesBundle": "" }
+        "psr-4": { "Pecserke\\YamlFixturesBundle\\": "" }
     },
-    "target-dir": "Pecserke/YamlFixturesBundle",
     "require": {
         "php": ">=5.3.3",
-        "doctrine/data-fixtures": "1.*@alpha",
-        "symfony/framework-bundle": ">=2.3,<3.0",
-        "symfony/http-kernel": ">=2.3,<3.0",
-        "symfony/dependency-injection": ">=2.3,<3.0",
-        "symfony/config": ">=2.3,<3.0",
-        "symfony/console": ">=2.3,<3.0",
-        "symfony/filesystem": ">=2.3,<3.0",
-        "symfony/yaml": ">=2.3,<3.0",
-        "symfony/property-access": ">=2.3,<3.0"
+        "doctrine/data-fixtures": "~1.0",
+        "symfony/framework-bundle": "~2.3",
+        "symfony/http-kernel": "~2.3",
+        "symfony/dependency-injection": "~2.3",
+        "symfony/config": "~2.3",
+        "symfony/console": "~2.3",
+        "symfony/finder": "~2.3",
+        "symfony/yaml": "~2.3",
+        "symfony/property-access": "~2.3"
     },
     "require-dev": {
-        "doctrine/doctrine-bundle": "*",
-        "doctrine/orm": ">=2.3, <3.0",
-        "doctrine/mongodb-odm": "1.0.*",
-        "phpunit/phpunit": "~4.3"
+        "doctrine/orm": "*",
+        "doctrine/doctrine-bundle": "~1.3",
+        "doctrine/mongodb-odm": "*@beta",
+        "doctrine/mongodb-odm-bundle": "~3.0@beta",
+        "jackalope/jackalope-doctrine-dbal": "*",
+        "doctrine/phpcr-odm": "~1.2",
+        "doctrine/phpcr-bundle": "~1.2",
+        "phpunit/phpunit": "~4.3",
+        "mikey179/vfsStream": "~1"
     },
     "suggest": {
-        "doctrine/orm": "Support for relation database fixtures",
-        "doctrine/mongodb-odm": "Support for mongo database fixtures"
-    },
-    "minimum-stability": "beta"
+        "doctrine/doctrine-bundle": "Support for relational database fixtures",
+        "doctrine/mongodb-odm-bundle": "Support for MongoDB database fixtures",
+        "doctrine/phpcr-odm": "Support for PHPCR database fixtures"
+    }
 }
