@@ -14,6 +14,7 @@ wget https://github.com/mongodb/libbson/archive/master.tar.gz
 tar xzf master.tar.gz
 rm master.tar.gz
 cd libbson-master
+./autogen.sh
 ./configure
 make
 sudo make install
