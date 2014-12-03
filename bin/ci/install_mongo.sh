@@ -45,3 +45,6 @@ if (php --version | grep -i HipHop > /dev/null); then
 else
     echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 fi
+
+# show mongo PHP extension version
+echo "ext-mongo version: `php -r 'echo phpversion(\"mongo\");'`"
