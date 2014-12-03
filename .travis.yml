@@ -1,18 +1,22 @@
 language: php
 
 php:
-    - 5.3.3
-    - 5.3
-    - 5.4
-    - 5.5
-    - 5.6
+    #- 5.3.3
+    #- 5.3
+    #- 5.4
+    #- 5.5
+    #- 5.6
     - hhvm
 
 env:
-    - SYMFONY_VERSION=2.3
-    - SYMFONY_VERSION=2.4
-    - SYMFONY_VERSION=2.5
+#    - SYMFONY_VERSION=2.3
+#    - SYMFONY_VERSION=2.4
+#    - SYMFONY_VERSION=2.5
     - SYMFONY_VERSION=2.6
+
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -y hhvm-dev
 
 before_script:
     - bin/ci/install_mongo.sh
