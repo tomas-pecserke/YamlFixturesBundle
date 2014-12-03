@@ -8,13 +8,7 @@ if (php --version | grep -i HipHop > /dev/null); then
     cd mongofill-hhvm-master
     ./build.sh || exit 1
 
-    export MONGO_LIB=`pwd`/mongo.so
-    if [ ! -f $MONGO_LIB ]; then
-        echo Error: mongo extension is not present
-        exit 1
-    fi
-
-    echo "hhvm.dynamic_extension_path = $MONGO_LIB" >> /etc/hhvm/php.ini
+    echo "hhvm.dynamic_extension_path = `pwd`" >> /etc/hhvm/php.ini
     echo "hhvm.dynamic_extensions[mongo] = mongo.so" >> /etc/hhvm/php.ini
 else
     echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
