@@ -31,7 +31,7 @@ before_install:
 
 install:
     - bin/ci/install_mongo.sh
-    - echo "ext-mongo version: `php -r 'echo phpversion(\"mongo\");'`"
+    - echo "ext-mongo version: $(php -r 'echo phpversion(\"mongo\");')"
 
 before_script:
     - if [ $(php -v | grep '5.3.3' -c) -ne 0 ]; then export PREFER="--prefer-source"; else PREFER="--prefer-dist"; fi
