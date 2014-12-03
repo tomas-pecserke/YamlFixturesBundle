@@ -1,22 +1,24 @@
 language: php
 
 php:
-    #- 5.3.3
-    #- 5.3
-    #- 5.4
-    #- 5.5
-    #- 5.6
+    - 5.3.3
+    - 5.3
+    - 5.4
+    - 5.5
+    - 5.6
     - hhvm
 
 matrix:
     allow_failures:
         - php: hhvm
+        - env: SYMFONY_VERSION=2.7@dev
 
 env:
-#    - SYMFONY_VERSION=2.3
-#    - SYMFONY_VERSION=2.4
-#    - SYMFONY_VERSION=2.5
+    - SYMFONY_VERSION=2.3
+    - SYMFONY_VERSION=2.4
+    - SYMFONY_VERSION=2.5
     - SYMFONY_VERSION=2.6
+    - SYMFONY_VERSION=2.7@dev
 
 before_install:
     - if (php --version | grep -i HipHop > /dev/null); then sudo bin/ci/install_g++.sh; fi
@@ -27,7 +29,7 @@ before_install:
 before_script:
     - bin/ci/install_mongo.sh
     - if [ $(php -v | grep '5.3.3' -c) -ne 0 ]; then export PREFER="--prefer-source"; else PREFER="--prefer-dist"; fi
-    - composer require symfony/framework-bundle:${SYMFONY_VERSION} ${PREFER} --no-interaction --no-progress
+    - composer require symfony/symfony:${SYMFONY_VERSION} ${PREFER} --no-interaction --no-progress
 
 notifications:
     email:
