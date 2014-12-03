@@ -18,10 +18,10 @@ sudo dpkg -i libgoogle-glog-dev_0.3.1-1ubuntu1_amd64.deb
 rm libgoogle-glog-dev_0.3.1-1ubuntu1_amd64.deb
 
 # install libjemalloc
-wget http://mirrors.kernel.org/ubuntu/pool/universe/j/jemalloc/libjemalloc1_3.6.0-2_amd64.deb
+wget http://ubuntu.mirrors.tds.net/ubuntu/pool/universe/j/jemalloc/libjemalloc1_3.6.0-2_amd64.deb
 sudo dpkg -i libjemalloc1_3.6.0-2_amd64.deb
 rm libjemalloc1_3.6.0-2_amd64.deb
-wget http://mirrors.kernel.org/ubuntu/pool/universe/j/jemalloc/libjemalloc-dev_3.6.0-2_amd64.deb
+wget http://ubuntu.mirrors.tds.net/ubuntu/pool/universe/j/jemalloc/libjemalloc-dev_3.6.0-2_amd64.deb
 sudo dpkg -i libjemalloc-dev_3.6.0-2_amd64.deb
 rm libjemalloc-dev_3.6.0-2_amd64.deb
 
