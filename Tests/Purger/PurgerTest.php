@@ -40,16 +40,6 @@ class PurgerTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass()
         ;
 
-        $self = $this;
-
-        $this->registry
-            ->expects($this->any())
-            ->method('getManagers')
-            ->willReturnCallback(function() use ($self) {
-                return array($self->manager);
-            })
-        ;
-
         $this->purger = new Purger();
         $this->purger->addRegistry($this->registry);
     }
@@ -60,6 +50,11 @@ class PurgerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock()
+        ;
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagers')
+            ->willReturn(array($this->manager))
         ;
 
         $factory = $this
@@ -102,6 +97,11 @@ class PurgerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagers')
+            ->willReturn(array($this->manager))
+        ;
 
         $factory = $this
             ->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadataFactory')
@@ -129,6 +129,11 @@ class PurgerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Doctrine\ODM\PHPCR\DocumentManager')
             ->disableOriginalConstructor()
             ->getMock()
+        ;
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagers')
+            ->willReturn(array($this->manager))
         ;
 
         $session = $this

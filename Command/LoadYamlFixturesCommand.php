@@ -85,6 +85,7 @@ EOT;
             $purger = $this->getContainer()->get('pecserke_fixtures.purger');
             $purger->purge($input->getOption('purge-with-truncate'));
         }
+
         $this->loadFixtures($output, $fixturesData);
     }
 
