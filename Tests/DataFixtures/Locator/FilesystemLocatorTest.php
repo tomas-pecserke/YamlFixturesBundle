@@ -11,8 +11,8 @@
 
 namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures\Locator;
 
-use org\bovigo\vfs\vfsStream;
 use Pecserke\YamlFixturesBundle\DataFixtures\Locator\FilesystemLocator;
+use Symfony\Component\Filesystem\Filesystem;
 
 class FileSystemLocatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,10 +25,14 @@ class FileSystemLocatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->locator = new FilesystemLocator();
+        $this->rootDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . md5(rand()) . DIRECTORY_SEPARATOR;
+        mkdir($this->rootDir);
+    }
 
-        $rootDir = 'filesystem_locator_test';
-        $root = vfsStream::setup($rootDir);
-        $this->rootDir = $root->url($rootDir) . '/';
+    protected function tearDown()
+    {
+        $filesystem = new Filesystem();
+        $filesystem->remove($this->rootDir);
     }
 
     public function testFind()

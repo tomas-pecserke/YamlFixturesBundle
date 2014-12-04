@@ -11,8 +11,8 @@
 
 namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures\Locator;
 
-use org\bovigo\vfs\vfsStream;
 use Pecserke\YamlFixturesBundle\DataFixtures\Locator\BundleResourcesLocator;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class BundleResourceLocatorTest extends \PHPUnit_Framework_TestCase
@@ -28,6 +28,7 @@ class BundleResourceLocatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $locator;
 
+    protected $rootDir;
     protected $appBundleFixturesDir;
     protected $bundleFixturesDir;
 
@@ -49,21 +50,25 @@ class BundleResourceLocatorTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->locator = new BundleResourcesLocator($this->kernel);
+        $this->rootDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . md5(rand());
 
-        $rootDir = 'bundle_resource_locator_test';
-        $root = vfsStream::setup($rootDir);
-        $rootDir = $root->url($rootDir);
-
-        $appRoot = $rootDir . '/app';
+        $appRoot = $this->rootDir . '/app';
         $this->appBundleFixturesDir = $appRoot . '/Resources/TestBundle/fixtures/';
         mkdir($this->appBundleFixturesDir, 0777, true);
         $this->kernel->expects($this->any())->method('getRootDir')->willReturn($appRoot);
 
-        $bundleDir = $rootDir . '/bundles/TestBundle';
+        $bundleDir = $this->rootDir . '/bundles/TestBundle';
         $this->bundleFixturesDir = $bundleDir . '/Resources/fixtures/';
         mkdir($this->bundleFixturesDir, 0777, true);
         $this->bundle->expects($this->any())->method('getPath')->willReturn($bundleDir);
     }
+
+    protected function tearDown()
+    {
+        $filesystem = new Filesystem();
+        $filesystem->remove($this->rootDir);
+    }
+
 
     public function testFind()
     {

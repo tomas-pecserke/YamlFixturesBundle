@@ -40,11 +40,13 @@ class PurgerTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass()
         ;
 
+        $self = $this;
+
         $this->registry
             ->expects($this->any())
             ->method('getManagers')
-            ->willReturnCallback(function() {
-                return array($this->manager);
+            ->willReturnCallback(function() use ($self) {
+                return array($self->manager);
             })
         ;
 
