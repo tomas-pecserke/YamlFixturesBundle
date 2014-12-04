@@ -11,18 +11,12 @@
 
 namespace Pecserke\YamlFixturesBundle\Command;
 
-use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\Common\DataFixtures\Purger\PHPCRPurger;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ODM\MongoDB\DocumentManager as MongoDbDocumentManage;
-use Doctrine\ODM\PHPCR\DocumentManager as PhpCrDocumentManage;
-use Doctrine\ORM\EntityManager;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\Locator\BundleResourcesLocator;
 use Pecserke\YamlFixturesBundle\DataFixtures\Locator\FilesystemLocator;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
+use Pecserke\YamlFixturesBundle\Purger\Purger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,7 +81,9 @@ EOT;
                     return;
                 }
             }
-            $this->purge($input->getOption('purge-with-truncate'));
+            /* @var Purger $purger */
+            $purger = $this->getContainer()->get('pecserke_fixtures.purger');
+            $purger->purge($input->getOption('purge-with-truncate'));
         }
         $this->loadFixtures($output, $fixturesData);
     }
@@ -178,40 +174,6 @@ EOT;
         return call_user_func_array('array_merge', $fixtureFiles);
     }
 
-    /**
-     * @param bool $truncate
-     */
-    private function purge($truncate)
-    {
-        $managers = array();
-        foreach ($this->getDoctrines() as $doctrine) {
-            $managers[] = $doctrine->getManagers();
-        }
-        $managers = call_user_func_array('array_merge', $managers);
-
-        $ormPurger = new ORMPurger();
-        if ($truncate) {
-            $ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
-        }
-        $mongodbPurger = new MongoDBPurger();
-        $phpcrPurger = new PHPCRPurger();
-
-        foreach ($managers as $manager) {
-            if ($manager instanceof EntityManager) {
-                $ormPurger->setEntityManager($manager);
-                $ormPurger->purge();
-            } else if ($manager instanceof MongoDbDocumentManage) {
-                $mongodbPurger->setDocumentManager($manager);
-                $mongodbPurger->purge();
-            } else if ($manager instanceof PhpCrDocumentManage) {
-                $phpcrPurger->setDocumentManager($manager);
-                $phpcrPurger->purge();
-            }
-
-            throw new \UnexpectedValueException('unsupported ObjectManager');
-        }
-    }
-
     private function loadFixtures(OutputInterface $output, array $fixturesData)
     {
         $orm = $this->getContainer()->has('doctrine') ? $this->getContainer()->get('doctrine') : null;
@@ -242,21 +204,5 @@ EOT;
                 $loader->load($fixture, $om);
             }
         }
-    }
-
-    /**
-     * @return ManagerRegistry[]
-     */
-    private function getDoctrines()
-    {
-        $doctrines = array();
-        $container = $this->getContainer();
-        foreach ($this->supportedDoctrines as $service) {
-            if ($container->has($service)) {
-                $doctrines[] = $container->get($service);
-            }
-        }
-
-        return $doctrines;
     }
 }

@@ -1,9 +1,13 @@
 parameters:
     pecserke_fixtures.object_transformer.default.class: Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer
+    pecserke_fixtures.purger.class: Pecserke\YamlFixturesBundle\Purger\Purger
 
 services:
     pecserke_fixtures.object_transformer.default:
-        class: "%pecserke_fixtures.object_transformer.default.class%"
+        class: %pecserke_fixtures.object_transformer.default.class%
 
     pecserke_fixtures.object_transformer:
         alias: pecserke_fixtures.object_transformer.default
+
+    pecserke_fixtures.purger:
+        class: %pecserke_fixtures.purger.class%

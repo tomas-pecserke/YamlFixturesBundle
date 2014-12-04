@@ -13,12 +13,13 @@ namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures\Locator;
 
 use org\bovigo\vfs\vfsStream;
 use Pecserke\YamlFixturesBundle\DataFixtures\Locator\BundleResourcesLocator;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class BundleResourceLocatorTest extends \PHPUnit_Framework_TestCase
 {
     protected $bundle;
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|KernelInterface
      */
     protected $kernel;
 

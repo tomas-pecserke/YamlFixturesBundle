@@ -11,8 +11,14 @@
 
 namespace Pecserke\YamlFixturesBundle;
 
+use Pecserke\YamlFixturesBundle\DependencyInjection\CompilerPass\DetectMangerRegistriesCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class PecserkeYamlFixturesBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new DetectMangerRegistriesCompilerPass());
+    }
 }

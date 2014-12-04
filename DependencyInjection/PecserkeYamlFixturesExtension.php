@@ -20,7 +20,15 @@ class PecserkeYamlFixturesExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = $this->getConfiguration($configs, $container);
+        $config = $this->processConfiguration($configuration, $configs);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+
+        $container->setParameter(
+            'pecserke_fixtures.supported_registry_service_ids',
+            $config['supported_registry_service_ids']
+        );
     }
 }
