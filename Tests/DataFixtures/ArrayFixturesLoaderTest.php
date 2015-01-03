@@ -52,15 +52,18 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
                 'example.object.0' => array(
                     'publicProperty' => 'value1',
                     'privatePropertyWithSetMethod' => 'value2',
+                    'privateSelfReferenceParentProperty' => null
                 ),
                 'example.object.1' => array(
                     'publicProperty' => 'value4',
                     'privatePropertyWithSetMethod' => 'value5',
+                    'privateSelfReferenceParentProperty' => '@example.object.0'
                 )
             )
         );
         $this->loader->load($fixture, $this->manager);
 
+        /** @var $objects ExampleObject[] */
         $objects = $this->manager->all();
 
         $this->assertCount(count($fixture['data']), $objects);
@@ -72,7 +75,15 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
             $this->assertInstanceOf($fixture['class'], $object);
             $this->assertEquals($value['publicProperty'], $object->publicProperty);
             $this->assertEquals($value['privatePropertyWithSetMethod'], $object->getPrivatePropertyWithSetMethod());
+
+            $selfParent = $value['privateSelfReferenceParentProperty'];
+            if ($selfParent !== null) {
+                $selfParent = $objects[ltrim($selfParent, '@')];
+            }
+            $this->assertEquals($selfParent, $object->getPrivateSelfReferenceParentProperty());
         }
+
+        $this->assertEquals($objects['example.object.1'], $objects['example.object.0']->getPrivateSelfReferenceChildrenProperty());
     }
 
     /**

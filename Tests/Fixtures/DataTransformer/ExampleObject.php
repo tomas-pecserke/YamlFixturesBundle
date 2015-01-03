@@ -13,6 +13,16 @@ class ExampleObject
 
     private $privatePropertyWithAddMethod;
 
+    /**
+     * @var ExampleObject
+     */
+    private $privateSelfReferenceParentProperty;
+
+    /**
+     * @var ExampleObject[]
+     */
+    private $privateSelfReferenceChildrenProperty;
+
     public function getId()
     {
         return $this->id;
@@ -41,5 +51,37 @@ class ExampleObject
     protected function getPrivateProperty()
     {
         return $this->privateProperty;
+    }
+
+    /**
+     * @return ExampleObject[]
+     */
+    public function getPrivateSelfReferenceChildrenProperty()
+    {
+        return $this->privateSelfReferenceChildrenProperty;
+    }
+
+    /**
+     * @param ExampleObject[] $privateSelfReferenceChildrenProperty
+     */
+    public function setPrivateSelfReferenceChildrenProperty($privateSelfReferenceChildrenProperty)
+    {
+        $this->privateSelfReferenceChildrenProperty = $privateSelfReferenceChildrenProperty;
+    }
+
+    /**
+     * @return ExampleObject
+     */
+    public function getPrivateSelfReferenceParentProperty()
+    {
+        return $this->privateSelfReferenceParentProperty;
+    }
+
+    /**
+     * @param ExampleObject $privateSelfReferenceParentProperty
+     */
+    public function setPrivateSelfReferenceParentProperty($privateSelfReferenceParentProperty)
+    {
+        $this->privateSelfReferenceParentProperty = $privateSelfReferenceParentProperty;
     }
 }

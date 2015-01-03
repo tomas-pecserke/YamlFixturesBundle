@@ -49,6 +49,15 @@ class ArrayFixturesLoader implements ContainerAwareInterface
                 new $fixture['transformer']()
             ;
         }
+        $propertyTransformers = [];
+        if (!empty($fixture['propertyTransformer'])) {
+            foreach ($fixture['propertyTransformer'] as $property => $definition) {
+                $propertyTransformers[$property] = $definition{0} == '@' ?
+                    $this->container->get(substr($definition, 1)) :
+                    new $definition()
+                ;
+            }
+        }
         $transformer = isset($transformer) ?
             $transformer :
             $this->container->get('pecserke_fixtures.object_transformer')
@@ -63,7 +72,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
             $postPersist = isset($data[self::POST_PERSIST_ANNOTATION]) ? $data[self::POST_PERSIST_ANNOTATION] : null;
             unset($data[self::POST_PERSIST_ANNOTATION]);
 
-            $data = $this->parse($data);
+            $data = $this->parse($data, $propertyTransformers);
             $object = $transformer->transform($data, $fixture['class']);
 
             if (!empty($fixture['equal_condition'])) {
@@ -76,6 +85,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
 
             $manager->persist($object);
             $manager->flush();
+            $manager->refresh($object);
 
             $this->referenceRepository->addReference($referenceName, $object);
 
@@ -88,7 +98,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
                     ));
 
                 }
-                $postPersist = $this->parse($postPersist);
+                $postPersist = $this->parse($postPersist, $propertyTransformers);
                 if (!is_object($postPersist[0])) {
                     throw new \InvalidArgumentException(sprintf(
                         'invalid postPersist callback at "%s": argument 1: object expected, %s given',
@@ -113,7 +123,12 @@ class ArrayFixturesLoader implements ContainerAwareInterface
         $manager->flush();
     }
 
-    protected function parse(array $array)
+    /**
+     * @param mixed $array
+     * @param DataTransformerInterface[] $propertyTransformers
+     * @return mixed
+     */
+    protected function parse(array $array, array $propertyTransformers)
     {
         $dataTransformer = !empty($array[self::DATA_TRANSFORMER_ANNOTATION]) ? $array[self::DATA_TRANSFORMER_ANNOTATION] : null;
         unset($array[self::DATA_TRANSFORMER_ANNOTATION]);
@@ -142,7 +157,11 @@ class ArrayFixturesLoader implements ContainerAwareInterface
                         break;
                 }
             } else if (is_array($value)) {
-                $array[$key] = $this->parse($value);
+                $array[$key] = $this->parse($value, $propertyTransformers);
+            }
+
+            if (!empty($propertyTransformers[$key])) {
+                $array[$key] = $propertyTransformers[$key]->transform($array[$key]);
             }
         }
 
