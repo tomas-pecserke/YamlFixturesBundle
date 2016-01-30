@@ -75,8 +75,6 @@ class ArrayFixturesLoader implements ContainerAwareInterface
             }
 
             $manager->persist($object);
-            $manager->flush();
-
             $this->referenceRepository->addReference($referenceName, $object);
 
             if ($postPersist !== null) {
