@@ -1,7 +1,7 @@
 <?php
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
-use Pecserke\YamlFixturesBundle\DataFixtures\Exception\ConfigurationNotFoundException;
+use Pecserke\YamlFixturesBundle\DataFixtures\Exception\InvalidFixturesException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -14,7 +14,7 @@ class YamlFixtureFileParser
      *
      * @param array $fixtureFiles
      * @throws \InvalidArgumentException
-     * @throws ConfigurationNotFoundException
+     * @throws InvalidFixturesException
      * @return array
      */
     public function parse(array $fixtureFiles)
@@ -29,7 +29,10 @@ class YamlFixtureFileParser
 
         foreach ($fixturesData as $file => $fixtures) {
             if (empty($fixtures)) {
-                throw new ConfigurationNotFoundException("no fixture configuration found in file '$file', fix this by adding fixture configuration to file or by removing the file");
+                throw InvalidFixturesException::emptyData($file);
+            }
+            if (!is_array($fixtures)) {
+                throw InvalidFixturesException::mustBeArray($file, $fixtures);
             }
             foreach ($fixtures as $class => $fixture) {
                 if (!class_exists($class)) {

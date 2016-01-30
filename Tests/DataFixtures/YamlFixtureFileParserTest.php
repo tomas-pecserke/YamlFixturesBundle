@@ -6,11 +6,20 @@ use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
 class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException \Pecserke\YamlFixturesBundle\DataFixtures\Exception\ConfigurationNotFoundException
+     * @expectedException \Pecserke\YamlFixturesBundle\DataFixtures\Exception\InvalidFixturesException
      */
-    public function testParseThrowsConfigurationNotFundExceptionIfYamlFileIsEmpty()
+    public function testParseThrowsInvalidFixturesOnEmptyData()
     {
         $parser = new YamlFixtureFileParser();
-        $parser->parse(array(''));
+        $parser->parse(null);
+    }
+
+    /**
+     * @expectedException \Pecserke\YamlFixturesBundle\DataFixtures\Exception\InvalidFixturesException
+     */
+    public function testParseThrowsInvalidFixturesOnNotArrayFixtures()
+    {
+        $parser = new YamlFixtureFileParser();
+        $parser->parse('test');
     }
 }
