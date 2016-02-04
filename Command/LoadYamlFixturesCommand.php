@@ -21,7 +21,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -66,8 +65,8 @@ EOT
         }
 
         if ($input->isInteractive() && !$input->getOption('append')) {
-            /* @var DialogHelper $dialog */
-            $dialog = $this->getHelperSet()->get('dialog');
+            $helperName = class_exists('Symfony\Component\Console\Helper\QuestionHelper') ? 'question' : 'dialog';
+            $dialog = $this->getHelperSet()->get($helperName);
             if (!$dialog->askConfirmation($output, '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>', false)) {
                 return;
             }
