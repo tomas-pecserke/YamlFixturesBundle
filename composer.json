@@ -17,7 +17,7 @@
     },
     "target-dir": "Pecserke/YamlFixturesBundle",
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.3.9",
         "doctrine/data-fixtures": "1.*@alpha",
         "symfony/framework-bundle": ">=2.3,<3.0",
         "symfony/http-kernel": ">=2.3,<3.0",
