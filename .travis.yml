@@ -11,7 +11,13 @@ env:
     - SYMFONY_VERSION=2.4
     - SYMFONY_VERSION=2.5
 
+cache:
+    directories:
+        - $HOME/.composer/cache
+        - vendor
+
 before_script:
+    - phpenv config-rm xdebug.ini
     - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
     - if [ $(php -v | grep '5.3.3' -c) -ne 0 ]; then export PREFER="--prefer-source"; else PREFER="--prefer-dist"; fi
     - composer require symfony/framework-bundle:${SYMFONY_VERSION} ${PREFER} --no-interaction --no-progress
