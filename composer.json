@@ -8,35 +8,35 @@
     "authors": [
         {
             "name": "Tomáš Pecsérke",
-            "email": "tomas@pecserke.eu",
+            "email": "tomas.pecserke@gmail.com",
             "role": "Developer"
         }
     ],
     "autoload": {
-        "psr-0": { "Pecserke\\YamlFixturesBundle": "" }
+        "psr-4": { "Pecserke\\YamlFixturesBundle\\": "" }
     },
-    "target-dir": "Pecserke/YamlFixturesBundle",
     "require": {
-        "php": ">=5.3.3",
-        "doctrine/data-fixtures": "1.*@alpha",
-        "symfony/framework-bundle": ">=2.3,<3.0",
-        "symfony/http-kernel": ">=2.3,<3.0",
-        "symfony/dependency-injection": ">=2.3,<3.0",
-        "symfony/config": ">=2.3,<3.0",
-        "symfony/console": ">=2.3,<3.0",
-        "symfony/filesystem": ">=2.3,<3.0",
-        "symfony/yaml": ">=2.3,<3.0",
-        "symfony/property-access": ">=2.3,<3.0"
+        "php": ">=5.3.9",
+        "doctrine/data-fixtures": "~1.0",
+        "symfony/framework-bundle": "~2.3|~3.0",
+        "symfony/http-kernel": "~2.3|~3.0",
+        "symfony/dependency-injection": "~2.3|~3.0",
+        "symfony/config": "~2.3|~3.0",
+        "symfony/console": "~2.3|~3.0",
+        "symfony/filesystem": "~2.3|~3.0",
+        "symfony/yaml": "~2.3|~3.0",
+        "symfony/property-access": "~2.3|~3.0"
     },
     "require-dev": {
         "doctrine/doctrine-bundle": "*",
-        "doctrine/orm": ">=2.3, <3.0",
-        "doctrine/mongodb-odm": "1.0.*",
-        "phpunit/phpunit": "~4.3"
+        "doctrine/orm": ">=2.2",
+        "doctrine/mongodb-odm": "~1.0",
+        "phpunit/phpunit": ">=4.3"
     },
     "suggest": {
         "doctrine/orm": "Support for relation database fixtures",
-        "doctrine/mongodb-odm": "Support for mongo database fixtures"
+        "doctrine/mongodb-odm": "Support for mongo database fixtures",
+        "alcaeus/mongo-php-adapter": "PHP 7 bridge for ext-mongo using ext-mongodb"
     },
-    "minimum-stability": "beta"
+    "minimum-stability": "stable"
 }
