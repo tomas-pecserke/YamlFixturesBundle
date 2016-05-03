@@ -35,7 +35,8 @@
     },
     "suggest": {
         "doctrine/orm": "Support for relation database fixtures",
-        "doctrine/mongodb-odm": "Support for mongo database fixtures"
+        "doctrine/mongodb-odm": "Support for mongo database fixtures",
+        "alcaeus/mongo-php-adapter": "PHP 7 bridge for ext-mongo using ext-mongodb"
     },
     "minimum-stability": "stable"
 }
