@@ -39,5 +39,10 @@
         "doctrine/mongodb-odm": "Support for mongo database fixtures",
         "alcaeus/mongo-php-adapter": "PHP 7 bridge for ext-mongo using ext-mongodb"
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
 }
