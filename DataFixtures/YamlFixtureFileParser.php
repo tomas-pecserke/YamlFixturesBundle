@@ -19,10 +19,19 @@ class YamlFixtureFileParser
      */
     public function parse(array $fixtureFiles)
     {
-        $mapFn = function ($filename) {
-            return Yaml::parse($filename);
-        };
-        $fixturesData = array_combine($fixtureFiles, array_map($mapFn, $fixtureFiles));
+        $fixturesData = array();
+        foreach ($fixtureFiles as $filename) {
+            if (!is_string($filename)) {
+                throw InvalidFixturesException::invalidFilenameType($filename);
+            }
+            if (!file_exists($filename)) {
+                throw InvalidFixturesException::fileDoesNotExist($filename);
+            }
+            if (!is_readable($filename) || ($content = file_get_contents($filename)) === false) {
+                throw InvalidFixturesException::fileNotReadable($filename);
+            }
+            $fixturesData[$filename] = Yaml::parse($content);
+        }
 
         $sorted = array();
         $unsorted = array();

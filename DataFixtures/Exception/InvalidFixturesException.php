@@ -21,4 +21,29 @@ class InvalidFixturesException extends \InvalidArgumentException
     {
         return new InvalidFixturesException("fixtures in file '$file', must be defined as array. Data given: " . print_r($fixtures, true));
     }
+
+    /**
+     * @param mixed $filename
+     * @return InvalidFixturesException
+     */
+    static public function invalidFilenameType($filename)
+    {
+        return new InvalidFixturesException("filename expected to be string, got '" . gettype($filename) . "'");
+    }
+
+    /**
+     * @param string $filename
+     * @return InvalidFixturesException
+     */
+    public static function fileDoesNotExist($filename) {
+        return new InvalidFixturesException("file '$filename' does not exist");
+    }
+
+    /**
+     * @param string $filename
+     * @return InvalidFixturesException
+     */
+    public static function fileNotReadable($filename) {
+        return new InvalidFixturesException("cannot read file '$filename'");
+    }
 }
