@@ -17,6 +17,7 @@ use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLocator;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -58,16 +59,16 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /* @var RegistryInterface $orm */
         $orm = $this->getContainer()->has('doctrine') ? $this->getContainer()->get('doctrine') : null;
+        /* @var RegistryInterface $odm */
         $odm = $this->getContainer()->has('doctrine_mongodb') ? $this->getContainer()->get('doctrine_mongodb') : null;
         if ($orm === null && $odm === null) {
             throw new \InvalidArgumentException('doctrine ORM nor ODM is defined');
         }
 
         if ($input->isInteractive() && !$input->getOption('append')) {
-            $helperName = class_exists('Symfony\Component\Console\Helper\QuestionHelper') ? 'question' : 'dialog';
-            $dialog = $this->getHelperSet()->get($helperName);
-            if (!$dialog->askConfirmation($output, '<question>Careful, database will be purged. Do you want to continue Y/N ?</question>', false)) {
+            if (!$this->confirmPurge($input, $output)) {
                 return;
             }
         }
@@ -76,10 +77,33 @@ EOT
         $app = $this->getApplication();
         /* @var Kernel $kernel */
         $kernel = $app->getKernel();
-        $fixtureLocator = new YamlFixturesLocator($kernel);
 
-        $dirOrFile = $input->getOption('fixtures');
+        $fixtureFiles = $this->locateFixtures($kernel, $input->getOption('fixtures'));
+
+        $parser = new YamlFixtureFileParser();
+        $fixturesData = $parser->parse($fixtureFiles);
+        if (empty($fixturesData)) {
+            $output->writeln('  <info>No fixtures to load</info>');
+
+            return;
+        }
+
+        if (!$input->getOption('append')) {
+            $this->purge($orm, $odm, $input->getOption('purge-with-truncate'));
+        }
+
+        $this->load($fixturesData, $orm, $odm, $output);
+    }
+
+    /**
+     * @param Kernel $kernel
+     * @param bool $dirOrFile
+     * @return string[]
+     */
+    private function locateFixtures(Kernel $kernel, $dirOrFile)
+    {
         $fixtureFiles = array();
+        $fixtureLocator = new YamlFixturesLocator($kernel);
         if ($dirOrFile) {
             $paths = is_array($dirOrFile) ? $dirOrFile : array($dirOrFile);
             foreach ($paths as $path) {
@@ -101,30 +125,57 @@ EOT
             }
         }
 
-        $parser = new YamlFixtureFileParser();
-        $fixturesData = $parser->parse($fixtureFiles);
-        if (empty($fixturesData)) {
-            $output->writeln('  <info>No fixtures to load</info>');
+        return $fixtureFiles;
+    }
 
-            return;
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return bool
+     */
+    private function confirmPurge(InputInterface $input, OutputInterface $output)
+    {
+        $questionText = 'Careful, database will be purged. Do you want to continue?';
+        if (class_exists('Symfony\Component\Console\Question\ConfirmationQuestion')) {
+            $helper = $this->getHelper('question');
+            $question = new \Symfony\Component\Console\Question\ConfirmationQuestion($questionText, false);
+
+            return (bool) $helper->ask($input, $output, $question);
+        } else {
+            $helperName = class_exists('Symfony\Component\Console\Helper\QuestionHelper') ? 'question' : 'dialog';
+            $dialog = $this->getHelperSet()->get($helperName);
+
+            return (bool) $dialog->askConfirmation(
+                $output,
+                '<question>Careful, database will be purged. Do you want to continue?</question>',
+                false
+            );
+        }
+    }
+
+    /**
+     * @param RegistryInterface $orm
+     * @param RegistryInterface $odm
+     * @param bool $truncate
+     */
+    private function purge(RegistryInterface $orm, RegistryInterface $odm, $truncate)
+    {
+        $ormPurger = new ORMPurger();
+        $ormPurger->setPurgeMode($truncate ? ORMPurger::PURGE_MODE_TRUNCATE : ORMPurger::PURGE_MODE_DELETE);
+        foreach (($orm !== null ? $orm->getManagers() : array()) as $em) {
+            $ormPurger->setEntityManager($em);
+            $ormPurger->purge();
         }
 
-        if (!$input->getOption('append')) {
-            $ormPurger = new ORMPurger();
-            $truncate = $input->getOption('purge-with-truncate');
-            $ormPurger->setPurgeMode($truncate ? ORMPurger::PURGE_MODE_TRUNCATE : ORMPurger::PURGE_MODE_DELETE);
-            foreach (($orm !== null ? $orm->getManagers() : array()) as $em) {
-                $ormPurger->setEntityManager($em);
-                $ormPurger->purge();
-            }
-
-            $odmPurger = new MongoDBPurger();
-            foreach (($odm !== null ? $odm->getManagers() : array()) as $dm) {
-                $odmPurger->setDocumentManager($dm);
-                $odmPurger->purge();
-            }
+        $odmPurger = new MongoDBPurger();
+        foreach (($odm !== null ? $odm->getManagers() : array()) as $dm) {
+            $odmPurger->setDocumentManager($dm);
+            $odmPurger->purge();
         }
+    }
 
+    private function load(array $fixturesData, RegistryInterface $orm, RegistryInterface $odm, OutputInterface $output)
+    {
         $loader = new ArrayFixturesLoader();
         $loader->setContainer($this->getContainer());
         $loader->setReferenceRepository(new ReferenceRepository());
