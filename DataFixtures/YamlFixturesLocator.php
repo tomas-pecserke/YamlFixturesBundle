@@ -1,6 +1,8 @@
 <?php
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\Kernel;
 
 class YamlFixturesLocator
@@ -31,18 +33,14 @@ class YamlFixturesLocator
             throw new \InvalidArgumentException("'$directory' isn't a directory or can noŧ read it");
         }
 
-        $files = array_filter(
-            scandir($directory),
-            function($filename) use ($directory) {
-                return strripos($filename, '.yml') === 0 && !is_dir("$directory/$filename");
-            }
-        );
+        $finder = new Finder();
+        $finder->files()->name('*.yml')->in($directory)->sortByName();
 
         return array_map(
-            function($filename) use ($directory) {
-                return "$directory/$filename";
+            function(SplFileInfo $file) {
+                return $file->getPathname();
             },
-            $files
+            iterator_to_array($finder)
         );
     }
 
@@ -61,32 +59,26 @@ class YamlFixturesLocator
     {
         $bundleDir = $this->kernel->getBundle($bundleName)->getPath() . '/Resources/fixtures';
         $appDir = $this->kernel->getRootDir() . '/Resources/' . $bundleName . '/fixtures';
-        $appDirExists = is_dir($appDir);
 
         $bundleFixtureFiles = array();
         if (is_dir($bundleDir)) {
-            foreach (scandir($bundleDir) as $file) {
-                $filename = "$bundleDir/$file";
-                if (strripos($file, '.yml') !== false && !is_dir($filename)) {
-                    $overrideFilename = "$appDir/$file";
-                    if ($appDirExists && file_exists($overrideFilename) && !is_dir($overrideFilename)) {
-                        $bundleFixtureFiles[] = $overrideFilename;
-                    } else {
-                        $bundleFixtureFiles[] = $filename;
-                    }
+            $finder = new Finder();
+            $finder->files()->name('*.yml')->in($bundleDir)->sortByName();
+            /* @var SplFileInfo $file */
+            foreach ($finder as $file) {
+                $overrideFilename = $appDir . DIRECTORY_SEPARATOR . $file->getRelativePathname();
+                if (!is_file($overrideFilename)) {
+                    $bundleFixtureFiles[] = $file->getPathname();
                 }
             }
         }
 
-        if ($appDirExists) {
-            foreach (scandir($appDir) as $file) {
-                $filename = "$appDir/$file";
-
-                if (strripos($file, '.yml') !== false && !is_dir($filename)) {
-                    if (!in_array($filename, $bundleFixtureFiles)) {
-                        $bundleFixtureFiles[] = $filename;
-                    }
-                }
+        if (is_dir($appDir)) {
+            $finder = new Finder();
+            $finder->files()->name('*.yml')->in($appDir)->sortByName();
+            /* @var SplFileInfo $file */
+            foreach ($finder as $file) {
+                $bundleFixtureFiles[] = $file->getPathname();
             }
         }
 

@@ -1,12 +1,9 @@
 composer.lock
+composer.phar
 phpunit.xml
 Tests/autoload.php
 Tests/Fixtures/app/cache/*
 Tests/Fixtures/app/logs/*
 catalog.xml
 vendor/*
-
-.buildpath
-.project
-.settings
-.idea
+build/

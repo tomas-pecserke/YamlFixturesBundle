@@ -2,6 +2,11 @@ PecserkeYamlFixturesBundle
 ==========================
 
 [![Build Status](https://travis-ci.org/tomas-pecserke/YamlFixturesBundle.png?branch=master)](https://travis-ci.org/tomas-pecserke/YamlFixturesBundle)
+[![Latest Stable Version](https://poser.pugx.org/pecserke/yaml-fixtures-bundle/v/stable)](https://packagist.org/packages/pecserke/yaml-fixtures-bundle)
+[![Total Downloads](https://poser.pugx.org/pecserke/yaml-fixtures-bundle/downloads)](https://packagist.org/packages/pecserke/yaml-fixtures-bundle)
+[![Latest Unstable Version](https://poser.pugx.org/pecserke/yaml-fixtures-bundle/v/unstable)](https://packagist.org/packages/pecserke/yaml-fixtures-bundle)
+[![License](https://poser.pugx.org/pecserke/yaml-fixtures-bundle/license)](https://packagist.org/packages/pecserke/yaml-fixtures-bundle)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/71307559-fa0c-4e0c-9a88-a0b3dcf97825/mini.png)](https://insight.sensiolabs.com/projects/71307559-fa0c-4e0c-9a88-a0b3dcf97825)
 
 This bundle for Symfony 2 allows you to write your
 [Doctrine2 Data Fixtures](https://github.com/doctrine/data-fixtures) in [YaML](http://www.yaml.org/)
