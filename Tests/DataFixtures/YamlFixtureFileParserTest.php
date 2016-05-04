@@ -11,7 +11,7 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
     public function testParseThrowsInvalidFixturesOnEmptyData()
     {
         $parser = new YamlFixtureFileParser();
-        $parser->parse([]);
+        $parser->parse(array());
     }
 
     /**
@@ -20,8 +20,8 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
     public function testParseThrowsInvalidFixturesOnNotArrayFixtures()
     {
         $parser = new YamlFixtureFileParser();
-        $parser->parse([
-            ['file' => 'incorrect_data']
-        ]);
+        $parser->parse(array(
+            array('file' => 'incorrect_data')
+        ));
     }
 }
