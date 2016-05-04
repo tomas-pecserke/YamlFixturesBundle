@@ -40,6 +40,12 @@ before_install:
 
 install: composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
 
+script:
+    - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+
+after_success:
+    - travis_retry php vendor/bin/coveralls
+
 notifications:
     email:
         - tomas.pecserke@gmail.com

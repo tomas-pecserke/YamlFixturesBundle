@@ -6,3 +6,4 @@ Tests/Fixtures/app/cache/*
 Tests/Fixtures/app/logs/*
 catalog.xml
 vendor/*
+build/
