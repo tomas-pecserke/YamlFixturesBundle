@@ -1,6 +1,7 @@
 <?php
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
+use Pecserke\YamlFixturesBundle\DataFixtures\Exception\InvalidFixturesException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -13,6 +14,7 @@ class YamlFixtureFileParser
      *
      * @param array $fixtureFiles
      * @throws \InvalidArgumentException
+     * @throws InvalidFixturesException
      * @return array
      */
     public function parse(array $fixtureFiles)
@@ -26,6 +28,12 @@ class YamlFixtureFileParser
         $unsorted = array();
 
         foreach ($fixturesData as $file => $fixtures) {
+            if (empty($fixtures)) {
+                throw InvalidFixturesException::emptyData($file);
+            }
+            if (!is_array($fixtures)) {
+                throw InvalidFixturesException::mustBeArray($file, $fixtures);
+            }
             foreach ($fixtures as $class => $fixture) {
                 if (!class_exists($class)) {
                     throw new \InvalidArgumentException("class '$class' doesn't exist in file '$file'");
