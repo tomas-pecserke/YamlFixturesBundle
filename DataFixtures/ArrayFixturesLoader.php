@@ -2,11 +2,10 @@
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ArrayFixturesLoader implements ContainerAwareInterface
