@@ -100,7 +100,8 @@ EOT
      * @param bool $dirOrFile
      * @return string[]
      */
-    private function locateFixtures(Kernel $kernel, $dirOrFile) {
+    private function locateFixtures(Kernel $kernel, $dirOrFile)
+    {
         $fixtureFiles = array();
         $fixtureLocator = new YamlFixturesLocator($kernel);
         if ($dirOrFile) {
@@ -124,7 +125,7 @@ EOT
             }
         }
 
-        return$fixtureFiles;
+        return $fixtureFiles;
     }
 
     /**
@@ -132,7 +133,8 @@ EOT
      * @param OutputInterface $output
      * @return bool
      */
-    private function confirmPurge(InputInterface $input, OutputInterface $output) {
+    private function confirmPurge(InputInterface $input, OutputInterface $output)
+    {
         $questionText = 'Careful, database will be purged. Do you want to continue?';
         if (class_exists('Symfony\Component\Console\Question\ConfirmationQuestion')) {
             $helper = $this->getHelper('question');
@@ -156,7 +158,8 @@ EOT
      * @param RegistryInterface $odm
      * @param bool $truncate
      */
-    private function purge(RegistryInterface $orm, RegistryInterface $odm, $truncate) {
+    private function purge(RegistryInterface $orm, RegistryInterface $odm, $truncate)
+    {
         $ormPurger = new ORMPurger();
         $ormPurger->setPurgeMode($truncate ? ORMPurger::PURGE_MODE_TRUNCATE : ORMPurger::PURGE_MODE_DELETE);
         foreach (($orm !== null ? $orm->getManagers() : array()) as $em) {
@@ -171,7 +174,8 @@ EOT
         }
     }
 
-    private function load(array $fixturesData, RegistryInterface $orm, RegistryInterface $odm, OutputInterface $output) {
+    private function load(array $fixturesData, RegistryInterface $orm, RegistryInterface $odm, OutputInterface $output)
+    {
         $loader = new ArrayFixturesLoader();
         $loader->setContainer($this->getContainer());
         $loader->setReferenceRepository(new ReferenceRepository());
