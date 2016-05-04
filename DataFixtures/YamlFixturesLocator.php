@@ -37,7 +37,7 @@ class YamlFixturesLocator
         $finder->files()->name('*.yml')->in($directory)->sortByName();
 
         return array_map(
-            function(SplFileInfo $file) {
+            function (SplFileInfo $file) {
                 return $file->getPathname();
             },
             iterator_to_array($finder)

@@ -43,7 +43,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
     public function load(array $fixture, ObjectManager $manager)
     {
         if (!empty($fixture['transformer'])) {
-            $transformer = $fixture['transformer']{0} == '@' ?
+            $transformer = ($fixture['transformer']{0} === '@') ?
                 $this->container->get(substr($fixture['transformer'], 1)) :
                 new $fixture['transformer']()
             ;
@@ -83,7 +83,6 @@ class ArrayFixturesLoader implements ContainerAwareInterface
                         $referenceName,
                         gettype($postPersist)
                     ));
-
                 }
                 $postPersist = $this->parse($postPersist);
                 if (!is_object($postPersist[0])) {
@@ -92,7 +91,6 @@ class ArrayFixturesLoader implements ContainerAwareInterface
                         $referenceName,
                         gettype($postPersist[0])
                     ));
-
                 }
                 if (!method_exists($postPersist[0], $postPersist[1])) {
                     throw new \InvalidArgumentException(sprintf(
@@ -115,7 +113,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
         $dataTransformer = !empty($array[self::DATA_TRANSFORMER_ANNOTATION]) ? $array[self::DATA_TRANSFORMER_ANNOTATION] : null;
         unset($array[self::DATA_TRANSFORMER_ANNOTATION]);
         if ($dataTransformer !== null) {
-            $dataTransformer = $dataTransformer{0} == '@' ?
+            $dataTransformer = ($dataTransformer{0} === '@') ?
                 $this->container->get(substr($dataTransformer, 1)) :
                 new $dataTransformer()
             ;
@@ -138,7 +136,7 @@ class ArrayFixturesLoader implements ContainerAwareInterface
                         $array[$key] = $this->container->getParameter($substring);
                         break;
                 }
-            } else if (is_array($value)) {
+            } elseif (is_array($value)) {
                 $array[$key] = $this->parse($value);
             }
         }

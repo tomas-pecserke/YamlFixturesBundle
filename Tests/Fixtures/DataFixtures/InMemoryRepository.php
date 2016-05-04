@@ -40,7 +40,7 @@ class InMemoryRepository implements ObjectRepository
 
         return array_filter(
             $objects = $this->findAll() ?: array(),
-            function($object) use ($criteria, $accessor) {
+            function ($object) use ($criteria, $accessor) {
                 foreach ($criteria as $property => $value) {
                     if ($value != $accessor->getValue($object, $property)) {
                         return false;
@@ -69,5 +69,4 @@ class InMemoryRepository implements ObjectRepository
     {
         return $this->className;
     }
-
 }
