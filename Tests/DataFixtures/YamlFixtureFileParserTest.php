@@ -25,7 +25,9 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
     public function testParseNoFixtures()
     {
         $parser = new YamlFixtureFileParser();
-        $parser->parse(array());
+        $fixtures = $parser->parse(array());
+
+        $this->assertEmpty($fixtures);
     }
 
     /**
