@@ -1,6 +1,7 @@
 <?php
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
+use Pecserke\YamlFixturesBundle\DataFixtures\Exception\InvalidFixturesException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -13,19 +14,35 @@ class YamlFixtureFileParser
      *
      * @param array $fixtureFiles
      * @throws \InvalidArgumentException
+     * @throws InvalidFixturesException
      * @return array
      */
     public function parse(array $fixtureFiles)
     {
-        $mapFn = function ($filename) {
-            return Yaml::parse($filename);
-        };
-        $fixturesData = array_combine($fixtureFiles, array_map($mapFn, $fixtureFiles));
+        $fixturesData = array();
+        foreach ($fixtureFiles as $filename) {
+            if (!is_string($filename)) {
+                throw InvalidFixturesException::invalidFilenameType($filename);
+            }
+            if (!file_exists($filename)) {
+                throw InvalidFixturesException::fileDoesNotExist($filename);
+            }
+            if (!is_readable($filename) || ($content = file_get_contents($filename)) === false) {
+                throw InvalidFixturesException::fileNotReadable($filename);
+            }
+            $fixturesData[$filename] = Yaml::parse($content);
+        }
 
         $sorted = array();
         $unsorted = array();
 
         foreach ($fixturesData as $file => $fixtures) {
+            if (empty($fixtures)) {
+                throw InvalidFixturesException::emptyData($file);
+            }
+            if (!is_array($fixtures)) {
+                throw InvalidFixturesException::mustBeArray($file, $fixtures);
+            }
             foreach ($fixtures as $class => $fixture) {
                 if (!class_exists($class)) {
                     throw new \InvalidArgumentException("class '$class' doesn't exist in file '$file'");
