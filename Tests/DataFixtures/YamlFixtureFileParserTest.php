@@ -93,7 +93,6 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseThrowsInvalidFixturesOnNotArrayFixtures()
     {
-
         try {
             file_put_contents('incorrect_data', '1');
             $parser = new YamlFixtureFileParser();
