@@ -11,6 +11,7 @@ namespace Pecserke\YamlFixturesBundle\Tests\Console\Helper;
  */
 
 use Pecserke\YamlFixturesBundle\Console\Helper\ConfirmationHelper;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 
 class ConfirmationHelperTest extends \PHPUnit_Framework_TestCase
@@ -31,6 +32,26 @@ class ConfirmationHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($helper->ask($this->createInputInterfaceMock(), $this->createOutputInterface(), ""));
     }
 
+    public function testGetSetInputStream()
+    {
+        $helper = new ConfirmationHelper();
+        $inputStream = $this->getInputStream("n\n");
+        $helper->setInputStream($inputStream);
+
+        $this->assertSame($inputStream, $helper->getInputStream());
+    }
+
+    public function testGetName()
+    {
+        $helper = new ConfirmationHelper();
+
+        $this->assertEquals("confirmation", $helper->getName());
+    }
+
+    /**
+     * @param string $input
+     * @return resource
+     */
     private function getInputStream($input)
     {
         $stream = fopen('php://memory', 'r+', false);
@@ -40,11 +61,18 @@ class ConfirmationHelperTest extends \PHPUnit_Framework_TestCase
         return $stream;
     }
 
+    /**
+     * @return StreamOutput
+     */
     protected function createOutputInterface()
     {
         return new StreamOutput(fopen('php://memory', 'r+', false));
     }
 
+    /**
+     * @param bool $interactive
+     * @return InputInterface
+     */
     protected function createInputInterfaceMock($interactive = true)
     {
         $mock = $this->getMock('Symfony\Component\Console\Input\InputInterface');
