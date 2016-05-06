@@ -122,4 +122,34 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
         $parser = new YamlFixtureFileParser();
         $parser->parse(array($file));
     }
+
+    public function testParseUnorderedAfterOrdered() {
+        $file = vfsStream::url('testDir/1.yml');
+        file_put_contents(
+            $file,
+            <<<EOT
+Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
+    data:
+        example.object.0:
+            publicProperty: value0
+EOT
+        );
+        $file2 = vfsStream::url('testDir/2.yml');
+        file_put_contents(
+            $file2,
+            <<<EOT
+Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
+    order: 3
+    data:
+        example.object.1:
+            publicProperty: value0
+EOT
+        );
+        $parser = new YamlFixtureFileParser();
+        $fixtures = $parser->parse(array($file, $file2));
+
+        $this->assertArrayHasKey(3, $fixtures);
+        $this->assertArrayHasKey(4, $fixtures);
+        $this->assertArrayHasKey('example.object.0', $fixtures[4][0]['data']);
+    }
 }
