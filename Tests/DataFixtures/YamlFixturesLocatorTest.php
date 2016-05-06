@@ -27,10 +27,10 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
 
     public function testFindInDirectory() {
         $dir = vfsStream::url('testDir');
-        touch($dir . '/1.yml');
+        file_put_contents($dir . '/1.yml', '');
         mkdir($dir . '/sub');
-        touch($dir . '/sub/2.yml');
-        touch($dir . '/sub/1.yml');
+        file_put_contents($dir . '/sub/2.yml', '');
+        file_put_contents($dir . '/sub/1.yml', '');
 
         /* @var Kernel $kernel */
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\Kernel')
@@ -54,7 +54,7 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testFindInDirectoryNotDirectory() {
         $dir = vfsStream::url('testDir');
-        touch($dir . '/1');
+        file_put_contents($dir . '/1', '');
 
         /* @var Kernel $kernel */
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\Kernel')
