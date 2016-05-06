@@ -18,9 +18,7 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
     {
         $file = __DIR__ . '/../Fixtures/AcmeDemoBundle/Resources/fixtures/example_1.yml';
         $parser = new YamlFixtureFileParser();
-        $fixtures = $parser->parse(array(
-            $file
-        ));
+        $fixtures = $parser->parse(array($file));
 
         $this->assertNotEmpty($fixtures);
         $this->assertArrayHasKey(3, $fixtures, "Expected fixtures of order 3");
@@ -45,9 +43,7 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
     public function testParseThrowsInvalidFixturesOnFilenameNotString()
     {
         $parser = new YamlFixtureFileParser();
-        $parser->parse(array(
-            null
-        ));
+        $parser->parse(array(null));
     }
 
     /**
@@ -67,6 +63,10 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseThrowsInvalidFixturesOnFileNotReadable()
     {
+        if (strpos(phpversion(), '5.3') === 0) {
+            $this->markTestSkipped();
+        }
+
         $file = vfsStream::url('testDir/not_readable_file');
         file_put_contents($file, '');
         chmod($file, 0222);
