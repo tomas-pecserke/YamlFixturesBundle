@@ -423,4 +423,36 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         );
         $this->loader->load($fixture, $this->manager);
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage data transformer 'stdClass' is not an instance of Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface
+     */
+    public function testLoadInvalidObjectTransformerClass()
+    {
+        $fixture = array(
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'transformer' => '\stdclass'
+        );
+        $this->loader->load($fixture, $this->manager);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage data transformer 'stdClass' is not an instance of Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface
+     */
+    public function testLoadInvalidDataTransformerClass()
+    {
+        $fixture = array(
+            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'data' => array(
+                'example.object' => array(
+                    'publicProperty' => array(
+                        '@dataTransformer' => '\stdclass'
+                    )
+                )
+            )
+        );
+        $this->loader->load($fixture, $this->manager);
+    }
 }
