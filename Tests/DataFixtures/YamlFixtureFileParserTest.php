@@ -108,4 +108,18 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
         $parser = new YamlFixtureFileParser();
         $parser->parse(array($file));
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageRegExp /^order must be int, '.*' given in file '.*'$/
+     */
+    public function testParseClassOrderNotInteger() {
+        $file = vfsStream::url('testDir/testFile.yml');
+        file_put_contents(
+            $file,
+            'Pecserke\\YamlFixturesBundle\\Tests\\Fixtures\\DataTransformer\\ExampleObject: { order: not int }'
+        );
+        $parser = new YamlFixtureFileParser();
+        $parser->parse(array($file));
+    }
 }
