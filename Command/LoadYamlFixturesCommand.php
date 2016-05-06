@@ -13,6 +13,7 @@ namespace Pecserke\YamlFixturesBundle\Command;
 
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Pecserke\YamlFixturesBundle\Console\Helper\ConfirmationHelper;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
@@ -68,7 +69,8 @@ EOT
         }
 
         if ($input->isInteractive() && !$input->getOption('append')) {
-            if (!$this->confirmPurge($input, $output)) {
+            $helper = new ConfirmationHelper();
+            if (!$helper->ask($input, $output, 'Careful, database will be purged. Do you want to continue?')) {
                 return;
             }
         }
@@ -126,31 +128,6 @@ EOT
         }
 
         return $fixtureFiles;
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return bool
-     */
-    private function confirmPurge(InputInterface $input, OutputInterface $output)
-    {
-        $questionText = 'Careful, database will be purged. Do you want to continue?';
-        if (class_exists('Symfony\Component\Console\Question\ConfirmationQuestion')) {
-            $helper = $this->getHelper('question');
-            $question = new \Symfony\Component\Console\Question\ConfirmationQuestion($questionText, false);
-
-            return (bool) $helper->ask($input, $output, $question);
-        } else {
-            $helperName = class_exists('Symfony\Component\Console\Helper\QuestionHelper') ? 'question' : 'dialog';
-            $dialog = $this->getHelperSet()->get($helperName);
-
-            return (bool) $dialog->askConfirmation(
-                $output,
-                '<question>Careful, database will be purged. Do you want to continue?</question>',
-                false
-            );
-        }
     }
 
     /**
