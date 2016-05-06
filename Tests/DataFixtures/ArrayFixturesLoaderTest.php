@@ -348,6 +348,7 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'equal_condition' => array('publicProperty'),
             'data' => array(
                 'example.object.0' => array(
                     'publicProperty' => 'value1',
@@ -361,23 +362,28 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         );
         $this->loader->load($fixture, $this->manager);
 
+        $this->assertCount(2, $this->manager->all());
+    }
+
+    public function testLoadFixtureEqualConditionDuplicate()
+    {
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
             'equal_condition' => array('publicProperty'),
             'data' => array(
-                'example.object.2' => array(
+                'example.object.0' => array(
                     'publicProperty' => 'value1',
-                    'privatePropertyWithSetMethod' => 'different_value2',
+                    'privatePropertyWithSetMethod' => 'value2',
                 ),
-                'example.object.3' => array(
-                    'publicProperty' => 'value4',
-                    'privatePropertyWithSetMethod' => 'different_value5',
+                'example.object.1' => array(
+                    'publicProperty' => 'value1',
+                    'privatePropertyWithSetMethod' => 'value5',
                 )
             )
         );
         $this->loader->load($fixture, $this->manager);
 
-        $this->assertCount(2, $this->manager->all());
+        $this->assertCount(1, $this->manager->all());
     }
 
     /**
