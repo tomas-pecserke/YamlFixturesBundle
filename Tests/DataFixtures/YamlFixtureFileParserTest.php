@@ -102,7 +102,8 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessageRegExp  /^class '.*' doesn't exist in file '.*'$/
      */
-    public function testParseClassNotExists() {
+    public function testParseClassNotExists()
+    {
         $file = vfsStream::url('testDir/testFile.yml');
         file_put_contents($file, 'ThisClassDoesNotExists: []');
         $parser = new YamlFixtureFileParser();
@@ -113,7 +114,8 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessageRegExp /^order must be int, '.*' given in file '.*'$/
      */
-    public function testParseClassOrderNotInteger() {
+    public function testParseClassOrderNotInteger()
+    {
         $file = vfsStream::url('testDir/testFile.yml');
         file_put_contents(
             $file,
@@ -123,7 +125,8 @@ class YamlFixtureFileParserTest extends \PHPUnit_Framework_TestCase
         $parser->parse(array($file));
     }
 
-    public function testParseUnorderedAfterOrdered() {
+    public function testParseUnorderedAfterOrdered()
+    {
         $file = vfsStream::url('testDir/1.yml');
         file_put_contents(
             $file,
