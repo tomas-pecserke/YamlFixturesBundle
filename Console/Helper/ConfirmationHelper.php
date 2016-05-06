@@ -67,7 +67,8 @@ class ConfirmationHelper extends Helper
         return $this->inputStream;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return 'confirmation';
     }
 }
