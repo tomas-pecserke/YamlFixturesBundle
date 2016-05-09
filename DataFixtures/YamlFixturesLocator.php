@@ -3,19 +3,19 @@ namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class YamlFixturesLocator
 {
     /**
-     * @var Kernel
+     * @var KernelInterface
      */
     private $kernel;
 
     /**
-     * @param Kernel $kernel
+     * @param KernelInterface $kernel
      */
-    public function __construct(Kernel $kernel)
+    public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }

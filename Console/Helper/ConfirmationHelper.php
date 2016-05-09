@@ -29,14 +29,18 @@ class ConfirmationHelper extends Helper
     {
         if (class_exists('Symfony\Component\Console\Helper\QuestionHelper')) {
             $helper = new \Symfony\Component\Console\Helper\QuestionHelper();
-            $helper->setInputStream($this->inputStream);
+            if ($this->inputStream !== null) {
+                $helper->setInputStream($this->inputStream);
+            }
             $confirmation = new \Symfony\Component\Console\Question\ConfirmationQuestion($question, $default);
 
             return (bool) $helper->ask($input, $output, $confirmation);
         }
 
         $helper = new \Symfony\Component\Console\Helper\DialogHelper();
-        $helper->setInputStream($this->inputStream);
+        if ($this->inputStream !== null) {
+            $helper->setInputStream($this->inputStream);
+        }
 
         return (bool) $helper->askConfirmation(
             $output,
