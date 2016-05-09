@@ -1,7 +1,11 @@
 parameters:
     pecserke_fixtures.object_transformer.default.class: Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer
+    pecserke_fixtures.reference_repository.class: Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository
 
 services:
+    pecserke_fixtures.reference_repository:
+        class: "%pecserke_fixtures.reference_repository.class%"
+
     pecserke_fixtures.object_transformer.default:
         class: "%pecserke_fixtures.object_transformer.default.class%"
 

@@ -24,7 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class LoadYamlFixturesCommand extends ContainerAwareCommand
 {
@@ -77,7 +77,7 @@ EOT
 
         /* @var Application $app */
         $app = $this->getApplication();
-        /* @var Kernel $kernel */
+        /* @var KernelInterface $kernel */
         $kernel = $app->getKernel();
 
         $fixtureFiles = $this->locateFixtures($kernel, $input->getOption('fixtures'));
@@ -94,15 +94,15 @@ EOT
             $this->purge($orm, $odm, $input->getOption('purge-with-truncate'));
         }
 
-        $this->load($fixturesData, $orm, $odm, $output);
+        $this->load($fixturesData, $output, $orm, $odm);
     }
 
     /**
-     * @param Kernel $kernel
+     * @param KernelInterface $kernel
      * @param bool $dirOrFile
      * @return string[]
      */
-    private function locateFixtures(Kernel $kernel, $dirOrFile)
+    private function locateFixtures(KernelInterface $kernel, $dirOrFile)
     {
         $fixtureFiles = array();
         $fixtureLocator = new YamlFixturesLocator($kernel);
@@ -151,11 +151,13 @@ EOT
         }
     }
 
-    private function load(array $fixturesData, RegistryInterface $orm, RegistryInterface $odm, OutputInterface $output)
+    private function load(array $fixturesData, OutputInterface $output, RegistryInterface $orm = null, RegistryInterface $odm = null)
     {
         $loader = new ArrayFixturesLoader();
         $loader->setContainer($this->getContainer());
-        $loader->setReferenceRepository(new ReferenceRepository());
+        /* @var ReferenceRepository $referenceRepository */
+        $referenceRepository = $this->getContainer()->get('pecserke_fixtures.reference_repository');
+        $loader->setReferenceRepository($referenceRepository);
 
         foreach ($fixturesData as $order => $fixtures) {
             foreach ($fixtures as $fixture) {
