@@ -2,6 +2,7 @@
 namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures;
 
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
+use Pecserke\YamlFixturesBundle\DataFixtures\FixtureObjectArrayDataEvaluator;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryObjectManager;
@@ -39,9 +40,12 @@ class ArrayFixturesLoaderTest extends \PHPUnit_Framework_TestCase
         $this->manager = new InMemoryObjectManager();
         $this->referenceRepository = new ReferenceRepository($this->manager);
 
-        $this->loader = new ArrayFixturesLoader();
-        $this->loader->setReferenceRepository($this->referenceRepository);
-        $this->loader->setContainer($this->container);
+
+        $evaluator = new FixtureObjectArrayDataEvaluator();
+        $evaluator->setContainer($this->container);
+        $evaluator->setReferenceRepository($this->referenceRepository);
+
+        $this->loader = new ArrayFixturesLoader($evaluator);
     }
 
     public function testLoad()
