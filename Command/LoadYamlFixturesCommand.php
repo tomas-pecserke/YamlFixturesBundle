@@ -15,6 +15,7 @@ use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Pecserke\YamlFixturesBundle\Console\Helper\ConfirmationHelper;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
+use Pecserke\YamlFixturesBundle\DataFixtures\FixtureObjectArrayDataEvaluator;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLocator;
@@ -153,11 +154,13 @@ EOT
 
     private function load(array $fixturesData, OutputInterface $output, RegistryInterface $orm = null, RegistryInterface $odm = null)
     {
-        $loader = new ArrayFixturesLoader();
-        $loader->setContainer($this->getContainer());
+        $evaluator = new FixtureObjectArrayDataEvaluator();
+        $evaluator->setContainer($this->getContainer());
         /* @var ReferenceRepository $referenceRepository */
         $referenceRepository = $this->getContainer()->get('pecserke_fixtures.reference_repository');
-        $loader->setReferenceRepository($referenceRepository);
+        $evaluator->setReferenceRepository($referenceRepository);
+
+        $loader = new ArrayFixturesLoader($evaluator);
 
         foreach ($fixturesData as $order => $fixtures) {
             foreach ($fixtures as $fixture) {

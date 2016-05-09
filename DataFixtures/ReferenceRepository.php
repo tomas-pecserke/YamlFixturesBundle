@@ -39,7 +39,8 @@ class ReferenceRepository extends BaseReferenceRepository
         $this->setReference($name, $object);
     }
 
-    public function getReferences() {
+    public function getReferences()
+    {
         return $this->references;
     }
 }
