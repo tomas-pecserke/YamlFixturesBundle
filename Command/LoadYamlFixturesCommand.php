@@ -16,12 +16,10 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Pecserke\YamlFixturesBundle\Console\Helper\ConfirmationHelper;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\FixtureObjectArrayDataEvaluator;
-use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixtureFileParser;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLocator;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -76,7 +74,7 @@ EOT
             }
         }
 
-        /* @var Application $app */
+        /* @var \Symfony\Bundle\FrameworkBundle\Console\Application $app */
         $app = $this->getApplication();
         /* @var KernelInterface $kernel */
         $kernel = $app->getKernel();
@@ -156,7 +154,7 @@ EOT
     {
         $evaluator = new FixtureObjectArrayDataEvaluator();
         $evaluator->setContainer($this->getContainer());
-        /* @var ReferenceRepository $referenceRepository */
+        /* @var \Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository $referenceRepository */
         $referenceRepository = $this->getContainer()->get('pecserke_fixtures.reference_repository');
         $evaluator->setReferenceRepository($referenceRepository);
 
