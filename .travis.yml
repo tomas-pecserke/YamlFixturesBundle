@@ -31,8 +31,8 @@ cache:
         - vendor
 
 before_install:
-    - if [[ $TRAVIS_PHP_VERSION = 5.* ]]; then echo "extension=mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; else COMPOSER_FLAGS="$COMPOSER_FLAGS --ignore-platform-reqs"; fi
-    - if [[ $TRAVIS_PHP_VERSION = 5.* ]]; then composer remove --dev alcaeus/mongo-php-adapter --no-update; fi
+    - if [[ $TRAVIS_PHP_VERSION = 5.* ]]; then echo "extension=mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+    - if [[ $TRAVIS_PHP_VERSION = 7.* ]]; then composer config "platform.ext-mongo" "1.6.16" && composer require alcaeus/mongo-php-adapter --no-update; fi
     - composer self-update
     - if [[ "$SYMFONY_VERSION" != "" ]]; then composer require "symfony/framework-bundle:${SYMFONY_VERSION}" --no-update; fi
 
