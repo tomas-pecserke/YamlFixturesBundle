@@ -1,12 +1,22 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
+use InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class YamlFixturesLocator
-{
+class YamlFixturesLocator {
     /**
      * @var KernelInterface
      */
@@ -15,8 +25,7 @@ class YamlFixturesLocator
     /**
      * @param KernelInterface $kernel
      */
-    public function __construct(KernelInterface $kernel)
-    {
+    public function __construct(KernelInterface $kernel) {
         $this->kernel = $kernel;
     }
 
@@ -24,13 +33,12 @@ class YamlFixturesLocator
      * Returns an array of file paths to YaML files in specified directory.
      *
      * @param string $directory
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
-    public function findInDirectory($directory)
-    {
+    public function findInDirectory($directory) {
         if (!is_dir($directory)) {
-            throw new \InvalidArgumentException("'$directory' isn't a directory or can noŧ read it");
+            throw new InvalidArgumentException("'$directory' isn't a directory or can noŧ read it");
         }
 
         $finder = new Finder();
@@ -52,11 +60,10 @@ class YamlFixturesLocator
      * Those under application root path take precedents over those under bundle path.
      *
      * @param string $bundleName
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
-    public function findInBundle($bundleName)
-    {
+    public function findInBundle($bundleName) {
         $bundleDir = $this->kernel->getBundle($bundleName)->getPath() . '/Resources/fixtures';
         $appDir = $this->kernel->getRootDir() . '/Resources/' . $bundleName . '/fixtures';
 

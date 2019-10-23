@@ -1,24 +1,33 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
+use InvalidArgumentException;
 use Pecserke\YamlFixturesBundle\DataFixtures\Exception\InvalidFixturesException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Parses YaML file(s) into an array.
  */
-class YamlFixtureFileParser
-{
+class YamlFixtureFileParser {
     /**
      * Parses YaML files and returns sorted array of fixtures.
      *
      * @param array $fixtureFiles
-     * @throws \InvalidArgumentException
-     * @throws InvalidFixturesException
      * @return array
+     * @throws InvalidFixturesException
+     * @throws InvalidArgumentException
      */
-    public function parse(array $fixtureFiles)
-    {
+    public function parse(array $fixtureFiles) {
         $fixturesData = array();
         foreach ($fixtureFiles as $filename) {
             if (!is_string($filename)) {
@@ -45,7 +54,7 @@ class YamlFixtureFileParser
             }
             foreach ($fixtures as $class => $fixture) {
                 if (!class_exists($class)) {
-                    throw new \InvalidArgumentException("class '$class' doesn't exist in file '$file'");
+                    throw new InvalidArgumentException("class '$class' doesn't exist in file '$file'");
                 }
 
                 $fixture['file'] = $file;
@@ -56,7 +65,7 @@ class YamlFixtureFileParser
                     unset($fixture['order']);
                     if (!is_int($order) && !ctype_digit($order)) {
                         $error = "order must be int, '$order' given in file '$file' fixture '$class'";
-                        throw new \InvalidArgumentException($error);
+                        throw new InvalidArgumentException($error);
                     }
                     $sorted[$order][] = $fixture;
                 } else {

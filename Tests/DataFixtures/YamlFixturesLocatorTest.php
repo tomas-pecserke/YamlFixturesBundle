@@ -3,7 +3,7 @@
 /*
  * This file is part of the YamlFixturesBundle package.
  *
- * (c) Tomas Pecserke <tomas@pecserke.eu>
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,23 +11,26 @@
 
 namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures;
 
+use InvalidArgumentException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
+use org\bovigo\vfs\vfsStreamException;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Pecserke\YamlFixturesBundle\DataFixtures\YamlFixturesLocator;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
-class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
-{
-    public function setUp()
-    {
+class YamlFixturesLocatorTest extends TestCase {
+    /**
+     * @throws vfsStreamException
+     */
+    public function setUp(): void {
         vfsStreamWrapper::register();
         vfsStreamWrapper::setRoot(new vfsStreamDirectory('testDir'));
     }
 
-    public function testFindInDirectory()
-    {
+    public function testFindInDirectory() {
         $dir = vfsStream::url('testDir');
         file_put_contents($dir . '/1.yml', '');
         mkdir($dir . '/sub');
@@ -37,8 +40,7 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
         /* @var Kernel $kernel */
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\Kernel')
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass()
-        ;
+            ->getMockForAbstractClass();
         $locator = new YamlFixturesLocator($kernel);
         $files = $locator->findInDirectory($dir);
 
@@ -50,45 +52,39 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $files);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp /^'.*' isn't a directory or can noŧ read it$/
-     */
-    public function testFindInDirectoryNotDirectory()
-    {
+    public function testFindInDirectoryNotDirectory() {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/^\'.*\' isn\'t a directory or can noŧ read it$/');
+
         $dir = vfsStream::url('testDir');
         file_put_contents($dir . '/1', '');
 
         /* @var Kernel $kernel */
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\Kernel')
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass()
-        ;
+            ->getMockForAbstractClass();
         $locator = new YamlFixturesLocator($kernel);
         $locator->findInDirectory($dir . '/1');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp /^'.*' isn't a directory or can noŧ read it$/
-     */
-    public function testFindInDirectoryNotExists()
-    {
+    public function testFindInDirectoryNotExists() {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/^\'.*\' isn\'t a directory or can noŧ read it$/');
+
         $dir = vfsStream::url('testDir');
 
         /* @var Kernel $kernel */
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\Kernel')
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass()
-        ;
+            ->getMockForAbstractClass();
         $locator = new YamlFixturesLocator($kernel);
         $locator->findInDirectory($dir . '/1');
     }
 
-    public function testFindInBundle()
-    {
+    public function testFindInBundle() {
         /* @var Kernel $kernel
-         * @var BundleInterface $bundle */
+         * @var BundleInterface $bundle
+         */
         list($kernel, $bundle) = $this->getKernelAndBundleMock();
         $locator = new YamlFixturesLocator($kernel);
         $files = $locator->findInBundle($bundle->getName());
@@ -96,10 +92,10 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($files);
     }
 
-    public function testFindInBundleInBundleDir()
-    {
+    public function testFindInBundleInBundleDir() {
         /* @var Kernel $kernel
-         * @var BundleInterface $bundle */
+         * @var BundleInterface $bundle
+         */
         list($kernel, $bundle) = $this->getKernelAndBundleMock();
         $bundleResourceDir = $bundle->getPath() . '/Resources/fixtures';
         mkdir($bundleResourceDir, 0777, true);
@@ -117,10 +113,10 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('vfs://testDir/bundle/Resources/fixtures/sub/2.yml', $files);
     }
 
-    public function testFindInBundleInBundleRootDir()
-    {
+    public function testFindInBundleInBundleRootDir() {
         /* @var Kernel $kernel
-         * @var BundleInterface $bundle */
+         * @var BundleInterface $bundle
+         */
         list($kernel, $bundle) = $this->getKernelAndBundleMock();
         $rootResourceDir = $kernel->getRootDir() . '/Resources/' . $bundle->getName() . '/fixtures';
         mkdir($rootResourceDir, 0777, true);
@@ -138,10 +134,10 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('vfs://testDir/root/Resources/test/fixtures/sub/2.yml', $files);
     }
 
-    public function testFindInBundleInBundleOverride()
-    {
+    public function testFindInBundleInBundleOverride() {
         /* @var Kernel $kernel
-         * @var BundleInterface $bundle */
+         * @var BundleInterface $bundle
+         */
         list($kernel, $bundle) = $this->getKernelAndBundleMock();
         $bundleResourceDir = $bundle->getPath() . '/Resources/fixtures';
         mkdir($bundleResourceDir, 0777, true);
@@ -164,21 +160,18 @@ class YamlFixturesLocatorTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('vfs://testDir/bundle/Resources/fixtures/sub/2.yml', $files);
     }
 
-    private function getKernelAndBundleMock()
-    {
+    private function getKernelAndBundleMock() {
         $dir = vfsStream::url('testDir');
         $rootDir = $dir . '/root';
         $bundleDir = $dir . '/bundle';
 
         $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\Kernel')
-            ->setMethods(array('getBundle', 'getRootDir'))
+            ->onlyMethods(array('getBundle', 'getRootDir'))
             ->disableOriginalConstructor()
-            ->getMockForAbstractClass()
-        ;
+            ->getMockForAbstractClass();
         $bundle = $this->getMockBuilder('Symfony\Component\HttpKernel\Bundle\BundleInterface')
-            ->setMethods(array('getPath'))
-            ->getMockForAbstractClass()
-        ;
+            ->onlyMethods(array('getPath'))
+            ->getMockForAbstractClass();
         $kernel->method('getBundle')->willReturn($bundle);
         $kernel->method('getRootDir')->willReturn($rootDir);
         $bundle->method('getPath')->willReturn($bundleDir);

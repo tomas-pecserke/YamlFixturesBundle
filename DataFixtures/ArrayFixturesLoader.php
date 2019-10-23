@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -10,8 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class ArrayFixturesLoader
-{
+class ArrayFixturesLoader {
     /**
      * @var EventDispatcherInterface
      */
@@ -22,15 +31,13 @@ class ArrayFixturesLoader
      */
     private $evaluator;
 
-    public function __construct(FixtureObjectArrayDataEvaluator $evaluator)
-    {
+    public function __construct(FixtureObjectArrayDataEvaluator $evaluator) {
         $this->evaluator = $evaluator;
         $this->eventDispatcher = new EventDispatcher();
-        $this->eventDispatcher->addListener(Events::POST_PERSIST, array(new PostPersistListener($evaluator), 'postPersist'));
+        $this->eventDispatcher->addListener(Events::POST_PERSIST, [new PostPersistListener($evaluator), 'postPersist']);
     }
 
-    public function load(array $fixture, ObjectManager $manager)
-    {
+    public function load(array $fixture, ObjectManager $manager) {
         $transformerDefinition = isset($fixture['transformer']) ? $fixture['transformer'] : null;
         $transformer = $this->evaluator->resolveObjectTransformer($transformerDefinition);
 
@@ -43,12 +50,17 @@ class ArrayFixturesLoader
         $manager->flush();
     }
 
-    protected function loadFixtureObject(ObjectManager $manager, ObjectTransformerInterface $transformer, $referenceName, $className, array $data, $equalCondition)
-    {
+    protected function loadFixtureObject(
+        ObjectManager $manager,
+        ObjectTransformerInterface $transformer,
+        $referenceName,
+        $className,
+        array $data,
+        $equalCondition
+    ) {
         $postPersist = isset($data[FixtureObjectArrayDataEvaluator::POST_PERSIST_ANNOTATION]) ?
             $data[FixtureObjectArrayDataEvaluator::POST_PERSIST_ANNOTATION] :
-            null
-        ;
+            null;
         unset($data[FixtureObjectArrayDataEvaluator::POST_PERSIST_ANNOTATION]);
 
         $data = $this->evaluator->evaluate($data);
@@ -65,11 +77,13 @@ class ArrayFixturesLoader
 
         $manager->persist($object);
         $referenceRepository->addReference($referenceName, $object);
-        $this->eventDispatcher->dispatch(Events::POST_PERSIST, new PostPersistEvent($object, $referenceName, $postPersist));
+        $this->eventDispatcher->dispatch(
+            Events::POST_PERSIST,
+            new PostPersistEvent($object, $referenceName, $postPersist)
+        );
     }
 
-    protected function getSame($object, array $equalCondition, ObjectManager $manager)
-    {
+    protected function getSame($object, array $equalCondition, ObjectManager $manager) {
         $conditions = array();
         $accessor = PropertyAccess::createPropertyAccessor();
 

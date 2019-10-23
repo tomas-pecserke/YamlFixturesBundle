@@ -1,6 +1,7 @@
 composer.lock
 composer.phar
 phpunit.xml
+.phpunit.result.cache
 Tests/autoload.php
 Tests/Fixtures/app/cache/*
 Tests/Fixtures/app/logs/*

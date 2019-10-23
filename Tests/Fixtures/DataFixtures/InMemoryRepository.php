@@ -1,41 +1,47 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+use InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class InMemoryRepository implements ObjectRepository
-{
+class InMemoryRepository implements ObjectRepository {
     private $manager;
     private $className;
 
     /**
      * @param InMemoryObjectManager $manager
      * @param string $className
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function __construct(InMemoryObjectManager $manager, $className)
-    {
+    public function __construct(InMemoryObjectManager $manager, $className) {
         if (!class_exists($className)) {
-            throw new \InvalidArgumentException("class '$className' does not exist");
+            throw new InvalidArgumentException("class '$className' does not exist");
         }
 
         $this->manager = $manager;
         $this->className = $className;
     }
 
-    public function find($id)
-    {
+    public function find($id) {
         return $this->manager->find($this->className, $id);
     }
 
-    public function findAll()
-    {
+    public function findAll() {
         return $this->manager->all($this->className);
     }
 
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
-    {
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null) {
         $accessor = PropertyAccess::createPropertyAccessor();
 
         return array_filter(
@@ -52,8 +58,7 @@ class InMemoryRepository implements ObjectRepository
         );
     }
 
-    public function findOneBy(array $criteria)
-    {
+    public function findOneBy(array $criteria) {
         $result = $this->findBy($criteria);
 
         if (empty($result)) {
@@ -62,11 +67,10 @@ class InMemoryRepository implements ObjectRepository
         if (count($result) === 1) {
             return $result[0];
         }
-        throw new \InvalidArgumentException('more than ino result fot specified criteria');
+        throw new InvalidArgumentException('more than ino result fot specified criteria');
     }
 
-    public function getClassName()
-    {
+    public function getClassName() {
         return $this->className;
     }
 }

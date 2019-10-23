@@ -1,23 +1,33 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\Tests\DataTransformer;
 
+use InvalidArgumentException;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
-{
+class ObjectTransformerTest extends TestCase {
     /**
      * @var ObjectTransformer
      */
     private $transformer;
 
-    protected function setUp()
-    {
+    protected function setUp(): void {
         $this->transformer = new ObjectTransformer();
     }
 
-    public function testTransform()
-    {
+    public function testTransform() {
         $data = array(
             'publicProperty' => 'value1',
             'privatePropertyWithSetMethod' => 'value2',
@@ -33,33 +43,27 @@ class ObjectTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($data['privatePropertyWithSetMethod'], $object->getPrivatePropertyWithSetMethod());
     }
 
-    /**
-     * @expectedException \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
-     */
-    public function testTransformPrivatePropertyWithoutSetter()
-    {
+    public function testTransformPrivatePropertyWithoutSetter() {
+        $this->expectException(NoSuchPropertyException::class);
+
         $this->transformer->transform(
             array('privateProperty' => 'value'),
             'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
         );
     }
 
-    /**
-     * @expectedException \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
-     */
-    public function testTransformNonExistProperty()
-    {
+    public function testTransformNonExistProperty() {
+        $this->expectException(NoSuchPropertyException::class);
+
         $this->transformer->transform(
             array('nonExistProperty' => 'value'),
             'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject'
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testTransformPrivateNonExistClass()
-    {
+    public function testTransformPrivateNonExistClass() {
+        $this->expectException(InvalidArgumentException::class);
+
         $this->transformer->transform(
             array(),
             'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\NonExistObject'
