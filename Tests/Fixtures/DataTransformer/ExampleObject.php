@@ -1,8 +1,17 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
 
-class ExampleObject
-{
+class ExampleObject {
     private $id;
 
     public $publicProperty;
@@ -13,33 +22,27 @@ class ExampleObject
 
     private $privatePropertyWithAddMethod;
 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
-    public function getPrivatePropertyWithSetMethod()
-    {
+    public function getPrivatePropertyWithSetMethod() {
         return $this->privatePropertyWithSetMethod;
     }
 
-    public function setPrivatePropertyWithSetMethod($privatePropertyWithSetMethod)
-    {
+    public function setPrivatePropertyWithSetMethod($privatePropertyWithSetMethod) {
         $this->privatePropertyWithSetMethod = $privatePropertyWithSetMethod;
     }
 
-    public function getPrivatePropertyWithAddMethod()
-    {
+    public function getPrivatePropertyWithAddMethod() {
         return $this->privatePropertyWithAddMethod;
     }
 
-    public function addPrivatePropertyWithAddMethod($privatePropertyWithAddMethod)
-    {
+    public function addPrivatePropertyWithAddMethod($privatePropertyWithAddMethod) {
         $this->privatePropertyWithAddMethod = $privatePropertyWithAddMethod;
     }
 
-    protected function getPrivateProperty()
-    {
+    protected function getPrivateProperty() {
         return $this->privateProperty;
     }
 }

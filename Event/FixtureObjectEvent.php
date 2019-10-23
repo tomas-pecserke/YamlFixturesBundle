@@ -3,7 +3,7 @@
 /*
  * This file is part of the YamlFixturesBundle package.
  *
- * (c) Tomas Pecserke <tomas@pecserke.eu>
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,8 +13,7 @@ namespace Pecserke\YamlFixturesBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class FixtureObjectEvent extends Event
-{
+class FixtureObjectEvent extends Event {
     /**
      * @var object
      */
@@ -26,12 +25,10 @@ class FixtureObjectEvent extends Event
     protected $referenceName;
 
     /**
-     * PostPersistEvent constructor.
      * @param object $object
      * @param string $referenceName
      */
-    public function __construct($object, $referenceName)
-    {
+    public function __construct($object, $referenceName) {
         $this->object = $object;
         $this->referenceName = $referenceName;
     }
@@ -39,16 +36,14 @@ class FixtureObjectEvent extends Event
     /**
      * @return object
      */
-    public function getObject()
-    {
+    public function getObject() {
         return $this->object;
     }
 
     /**
      * @return string
      */
-    public function getReferenceName()
-    {
+    public function getReferenceName() {
         return $this->referenceName;
     }
 }

@@ -1,12 +1,24 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures;
 
+use BadFunctionCallException;
 use Doctrine\Common\Persistence\ObjectManager;
+use InvalidArgumentException;
+use ReflectionException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class InMemoryObjectManager implements ObjectManager
-{
+class InMemoryObjectManager implements ObjectManager {
     private static $count = 0;
 
     private $objects;
@@ -16,14 +28,12 @@ class InMemoryObjectManager implements ObjectManager
      */
     private $propertyAccessor;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->objects = array();
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
-    public function find($className, $id)
-    {
+    public function find($className, $id) {
         if ($id < 0 || self::$count < $id) {
             return null;
         }
@@ -39,10 +49,13 @@ class InMemoryObjectManager implements ObjectManager
         return null;
     }
 
-    public function persist($object)
-    {
+    /**
+     * @param object $object
+     * @throws ReflectionException
+     */
+    public function persist($object) {
         if (!is_object($object)) {
-            throw new \InvalidArgumentException('$object is not an object');
+            throw new InvalidArgumentException('$object is not an object');
         }
 
         $class = get_class($object);
@@ -57,10 +70,9 @@ class InMemoryObjectManager implements ObjectManager
         $this->objects[$class][] = $object;
     }
 
-    public function remove($object)
-    {
+    public function remove($object) {
         if (!is_object($object)) {
-            throw new \InvalidArgumentException('$object is not an object');
+            throw new InvalidArgumentException('$object is not an object');
         }
 
         $class = get_class($object);
@@ -73,56 +85,45 @@ class InMemoryObjectManager implements ObjectManager
         }
     }
 
-    public function merge($object)
-    {
-        throw new \BadFunctionCallException('not implemented');
+    public function merge($object) {
+        throw new BadFunctionCallException('not implemented');
     }
 
-    public function clear($objectName = null)
-    {
+    public function clear($objectName = null) {
         $this->objects = array();
     }
 
-    public function detach($object)
-    {
+    public function detach($object) {
         $this->remove($object);
     }
 
-    public function refresh($object)
-    {
+    public function refresh($object) {
     }
 
-    public function flush()
-    {
+    public function flush() {
     }
 
-    public function getRepository($className)
-    {
+    public function getRepository($className) {
         return new InMemoryRepository($this, $className);
     }
 
-    public function getClassMetadata($className)
-    {
-        throw new \BadFunctionCallException('not implemented');
+    public function getClassMetadata($className) {
+        throw new BadFunctionCallException('not implemented');
     }
 
-    public function getMetadataFactory()
-    {
-        throw new \BadFunctionCallException('not implemented');
+    public function getMetadataFactory() {
+        throw new BadFunctionCallException('not implemented');
     }
 
-    public function initializeObject($obj)
-    {
-        throw new \BadFunctionCallException('not implemented');
+    public function initializeObject($obj) {
+        throw new BadFunctionCallException('not implemented');
     }
 
-    public function contains($object)
-    {
+    public function contains($object) {
         return $this->find(get_class($object), $object->getId()) !== null;
     }
 
-    public function all($className = null)
-    {
+    public function all($className = null) {
         if ($className !== null) {
             return array_key_exists($className, $this->objects) ? $this->objects[$className] : null;
         }

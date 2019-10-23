@@ -11,3 +11,4 @@ services:
 
     pecserke_fixtures.object_transformer:
         alias: pecserke_fixtures.object_transformer.default
+        public: true

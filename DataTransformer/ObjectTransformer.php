@@ -1,10 +1,21 @@
 <?php
+
+/*
+ * This file is part of the Pecserke YamlFixtures Bundle.
+ *
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Pecserke\YamlFixturesBundle\DataTransformer;
 
+use InvalidArgumentException;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class ObjectTransformer implements ObjectTransformerInterface
-{
+class ObjectTransformer implements ObjectTransformerInterface {
     /**
      * Transforms an associative array into an object of specified class.
      *
@@ -14,21 +25,20 @@ class ObjectTransformer implements ObjectTransformerInterface
      *
      * @param array $data
      * @param string $className
-     * @throws \InvalidArgumentException
-     * @throws \Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException
      * @return mixed
+     * @throws NoSuchPropertyException
+     * @throws InvalidArgumentException
      */
-    public function transform(array $data, $className)
-    {
+    public function transform(array $data, $className) {
         if (!class_exists($className)) {
-            throw new \InvalidArgumentException("class '$className' does not exist");
+            throw new InvalidArgumentException("class '$className' does not exist");
         }
 
         $object = new $className();
 
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($data as $property => $value) {
-            $accessor->setValue($object, (string) $property, $value);
+            $accessor->setValue($object, (string)$property, $value);
         }
 
         return $object;

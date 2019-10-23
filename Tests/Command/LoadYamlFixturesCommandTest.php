@@ -3,7 +3,7 @@
 /*
  * This file is part of the YamlFixturesBundle package.
  *
- * (c) Tomas Pecserke <tomas@pecserke.eu>
+ * (c) Tomas Pecserke <tomas.pecserke@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,18 +11,21 @@
 
 namespace Pecserke\YamlFixturesBundle\Command;
 
+use InvalidArgumentException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
+use org\bovigo\vfs\vfsStreamException;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
+use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryRepository;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class LoadYamlFixturesCommandTest extends \PHPUnit_Framework_TestCase
-{
+class LoadYamlFixturesCommandTest extends TestCase {
     /**
      * @var KernelInterface
      */
@@ -38,12 +41,15 @@ class LoadYamlFixturesCommandTest extends \PHPUnit_Framework_TestCase
      */
     private $container;
 
-    protected function setUp()
-    {
+    /**
+     * @throws vfsStreamException
+     */
+    protected function setUp(): void {
         $this->container = new ContainerBuilder();
 
         $this->kernel = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\KernelInterface');
         $this->kernel->method('getContainer')->willReturn($this->container);
+        $this->kernel->method('getBundles')->willReturn([]);
 
         $this->application = new Application($this->kernel);
         $this->application->add(new LoadYamlFixturesCommand());
@@ -52,8 +58,7 @@ class LoadYamlFixturesCommandTest extends \PHPUnit_Framework_TestCase
         vfsStreamWrapper::setRoot(new vfsStreamDirectory('testDir'));
     }
 
-    public function testExecute()
-    {
+    public function testExecute() {
         $fixtureRoot = vfsStream::url('testDir');
         file_put_contents($fixtureRoot . '/test.yml', <<< EOF
 Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
@@ -64,7 +69,7 @@ Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
         example.object.2:
             publicProperty: value2
 EOF
-);
+        );
 
         $this->kernel->method('getBundles')->willReturn(array());
         $doctrine = $this->getMockForAbstractClass('Symfony\Bridge\Doctrine\RegistryInterface');
@@ -78,6 +83,7 @@ EOF
 
         $repository = $this->getMockForAbstractClass('Doctrine\Common\Persistence\ObjectRepository');
         $om->method('getRepository')->willReturn($repository);
+        $repository->method('findBy')->willReturn([]);
 
         $command = $this->application->find('pecserke:fixtures:yml:load');
         $commandTester = new CommandTester($command);
@@ -102,18 +108,15 @@ EOF
         $this->assertEquals('value2', $entity2->publicProperty);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp /^Could not find any YaML fixtures files to load in: /
-     */
-    public function testExecuteNoFixtures()
-    {
+    public function testExecuteNoFixtures() {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/^Could not find any YaML fixtures files to load in: /');
+
         $fixtureRoot = vfsStream::url('testDir');
 
         $this->kernel->method('getBundles')->willReturn(array());
         $doctrine = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
-            ->getMockForAbstractClass()
-        ;
+            ->getMockForAbstractClass();
         $this->container->set('doctrine', $doctrine);
 
         $command = $this->application->find('pecserke:fixtures:yml:load');
