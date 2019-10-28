@@ -17,8 +17,7 @@ cache:
         - vendor
 
 before_install:
-    - pecl install mongodb
-    - composer self-update
+    - pecl install mongodb || pecl install -f mongodb
     - if [[ "$SYMFONY_VERSION" != "" ]]; then composer require "symfony/framework-bundle:${SYMFONY_VERSION}" --no-update; fi
 
 install: composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
