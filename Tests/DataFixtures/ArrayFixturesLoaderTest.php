@@ -12,10 +12,11 @@
 namespace Pecserke\YamlFixturesBundle\Tests\DataFixtures;
 
 use DateTime;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 use InvalidArgumentException;
+use OutOfBoundsException;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\FixtureObjectArrayDataEvaluator;
-use Pecserke\YamlFixturesBundle\DataFixtures\ReferenceRepository;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryObjectManager;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer;
@@ -50,7 +51,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->container->set('pecserke_fixtures.object_transformer', new ObjectTransformer());
 
         $this->manager = new InMemoryObjectManager();
-        $this->referenceRepository = new ReferenceRepository();
+        $this->referenceRepository = new ReferenceRepository($this->manager);
 
 
         $evaluator = new FixtureObjectArrayDataEvaluator();
@@ -163,7 +164,7 @@ class ArrayFixturesLoaderTest extends TestCase {
     }
 
     public function testLoadReferenceNotExist() {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $fixture = array(
             'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',

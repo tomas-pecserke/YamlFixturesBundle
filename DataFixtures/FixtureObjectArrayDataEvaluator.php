@@ -11,6 +11,7 @@
 
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 use InvalidArgumentException;
 use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
