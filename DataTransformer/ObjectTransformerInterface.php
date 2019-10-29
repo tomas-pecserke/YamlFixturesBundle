@@ -11,6 +11,8 @@
 
 namespace Pecserke\YamlFixturesBundle\DataTransformer;
 
+use InvalidArgumentException;
+
 interface ObjectTransformerInterface {
     /**
      * Transforms an associative array into an object of specified class.
@@ -21,8 +23,8 @@ interface ObjectTransformerInterface {
      *
      * @param array $data
      * @param string $className
-     * @return mixed
-     * @throws \InvalidArgumentException
+     * @return object
+     * @throws InvalidArgumentException
      */
-    public function transform(array $data, $className);
+    public function transform(array $data, string $className): object;
 }

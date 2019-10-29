@@ -24,12 +24,12 @@ class ObjectTransformer implements ObjectTransformerInterface {
      * If none of above applies, an InvalidArgumentException is thrown.
      *
      * @param array $data
-     * @param string $className
-     * @return mixed
+     * @param string
+     * @return object
      * @throws NoSuchPropertyException
      * @throws InvalidArgumentException
      */
-    public function transform(array $data, $className) {
+    public function transform(array $data, string $className): object {
         if (!class_exists($className)) {
             throw new InvalidArgumentException("class '$className' does not exist");
         }

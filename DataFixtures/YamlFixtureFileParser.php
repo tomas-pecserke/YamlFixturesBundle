@@ -27,7 +27,7 @@ class YamlFixtureFileParser {
      * @throws InvalidFixturesException
      * @throws InvalidArgumentException
      */
-    public function parse(array $fixtureFiles) {
+    public function parse(array $fixtureFiles): array {
         $fixturesData = array();
         foreach ($fixtureFiles as $filename) {
             if (!is_string($filename)) {

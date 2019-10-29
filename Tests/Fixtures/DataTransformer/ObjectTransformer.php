@@ -24,11 +24,11 @@ class ObjectTransformer extends BaseObjectTransformer {
      *
      * @param array $data
      * @param string $className
-     * @return mixed
+     * @return object
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function transform(array $data, $className) {
+    public function transform(array $data, string $className): object {
         foreach ($data as &$value) {
             $value = new DateTime($value);
         }
