@@ -27,6 +27,7 @@ class FixtureDataConfiguration implements ConfigurationInterface {
             ->arrayPrototype()
                 ->children()
                     ->scalarNode('class')
+                        ->isRequired()
                         ->cannotBeEmpty()
                         ->validate()
                             ->ifTrue(Closure::fromCallable([self::class, 'isClassInvalid']))
