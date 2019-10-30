@@ -13,7 +13,14 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Pecserke\\YamlFixturesBundle\\": "" }
+        "psr-4": {
+            "Pecserke\\YamlFixturesBundle\\": ["src/"]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pecserke\\YamlFixturesBundle\\": ["test/"]
+        }
     },
     "require": {
         "php": "^7.2",
@@ -37,11 +44,6 @@
         "phpunit/phpunit": "^8.4",
         "php-coveralls/php-coveralls": "^2.1",
         "mikey179/vfsstream": "^1.6"
-    },
-    "scripts": {
-        "test": [
-            "vendor/bin/phpunit"
-        ]
     },
     "suggest": {
         "doctrine/orm": "Support for relation database fixtures",

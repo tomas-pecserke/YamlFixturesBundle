@@ -9,11 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Pecserke\YamlFixturesBundle\Tests\DependencyInjection;
+namespace Pecserke\YamlFixturesBundle\DependencyInjection;
 
 use Exception;
-use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
-use Pecserke\YamlFixturesBundle\DependencyInjection\PecserkeYamlFixturesExtension;
+use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -21,12 +20,15 @@ class PecserkeYamlFixturesExtensionTest extends TestCase {
     /**
      * @throws Exception
      */
-    public function testLoad() {
+    public function testLoadingRegistersDefaultObjectTransformer(): void {
         $container = new ContainerBuilder();
         $extension = new PecserkeYamlFixturesExtension();
-        $extension->load(array(), $container);
+        $extension->load([], $container);
         $container->compile();
 
-        $this->assertTrue($container->get('pecserke_fixtures.object_transformer') instanceof ObjectTransformer);
+        $this->assertInstanceOf(
+            ObjectTransformerInterface::class,
+            $container->get('pecserke_yaml_fixtures.object_transformer.default')
+        );
     }
 }

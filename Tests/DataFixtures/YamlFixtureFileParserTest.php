@@ -128,23 +128,23 @@ class YamlFixtureFileParserTest extends TestCase {
         $file = vfsStream::url('testDir/1.yml');
         file_put_contents(
             $file,
-            <<<EOT
+            <<< YaML
 Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
     data:
         example.object.0:
             publicProperty: value0
-EOT
+YaML
         );
         $file2 = vfsStream::url('testDir/2.yml');
         file_put_contents(
             $file2,
-            <<<EOT
+            <<< YaML
 Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
     order: 3
     data:
         example.object.1:
             publicProperty: value0
-EOT
+YaML
         );
         $parser = new YamlFixtureFileParser();
         $fixtures = $parser->parse(array($file, $file2));

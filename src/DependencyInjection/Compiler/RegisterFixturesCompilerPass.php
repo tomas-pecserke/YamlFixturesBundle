@@ -11,9 +11,9 @@
 
 namespace Pecserke\YamlFixturesBundle\DependencyInjection\Compiler;
 
-use Pecserke\YamlFixturesBundle\DataFixtures\FixtureArrayDataFixture;
-use Pecserke\YamlFixturesBundle\DataFixtures\FixtureArrayDataLoaderInterface;
-use Pecserke\YamlFixturesBundle\DataFixtures\OrderedFixtureArrayDataFixture;
+use Doctrine\Bundle\FixturesBundle\DependencyInjection\CompilerPass\FixturesCompilerPass;
+use Pecserke\YamlFixturesBundle\Autoloader\DynamicFixtureArrayDataFixtureClassAutoloader;
+use Pecserke\YamlFixturesBundle\Loader\FixtureArrayDataLoaderInterface;
 use Pecserke\YamlFixturesBundle\Parser\FixtureDataConfiguration;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -68,16 +68,20 @@ class RegisterFixturesCompilerPass implements CompilerPassInterface {
 
         $i = 0;
         foreach ($config as $fixtureData) {
-            $definition = new Definition(FixtureArrayDataFixture::class, [
-                new Reference(FixtureArrayDataLoaderInterface::class),
-                $fixtureData
-            ]);
+            $definition = new Definition();
+            $definition->addMethodCall('setLoader', [new Reference(FixtureArrayDataLoaderInterface::class)]);
+            $definition->addMethodCall('setFixtureData', [$fixtureData]);
+
+            $classname = DynamicFixtureArrayDataFixtureClassAutoloader::CLASS_NAME_BASE;
             if ($fixtureData['order']) {
-                $definition->setClass(OrderedFixtureArrayDataFixture::class);
-                $definition->addArgument($fixtureData['order']);
+                $classname .= DynamicFixtureArrayDataFixtureClassAutoloader::ORDERED_SUFFIX;
+                $definition->addMethodCall('setOrder', [$fixtureData['order']]);
             }
-            $definition->setPrivate(true);
-            $container->setDefinition(FixtureArrayDataFixture::class . '.' . ++$i, $definition);
+
+            $definition->setClass($classname . '_' . $i++);
+            $definition->addTag(FixturesCompilerPass::FIXTURE_TAG);
+
+            $container->setDefinition($definition->getClass(), $definition);
         }
     }
 

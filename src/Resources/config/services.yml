@@ -1,0 +1,7 @@
+services:
+
+    Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer:
+
+    pecserke_yaml_fixtures.object_transformer.default:
+        alias: Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer
+        public: true

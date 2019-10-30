@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Pecserke\YamlFixturesBundle\Tests\Parser;
+namespace Pecserke\YamlFixturesBundle\Parser;
 
 use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
 use Pecserke\YamlFixturesBundle\DataTransformer\PropertyValueTransformerInterface;
-use Pecserke\YamlFixturesBundle\Parser\FixtureDataConfiguration;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
@@ -36,39 +36,40 @@ class FixtureDataConfigurationTest extends TestCase {
     }
 
     public function test_processConfiguration_usingAllSupportedOptions_processesCorrectly(): void {
-        $config = Yaml::parse(<<< EOF
-        - class: Pecserke\YamlFixturesBundle\Tests\Parser\TestObject
-          order: 1
-          transformer: Pecserke\YamlFixturesBundle\Tests\Parser\TestObjectTransformer
-          data:
-            john_doe:
-                firstName: John
-                lastName: Doe
-                birthDay:
-                    '@transformer': '@data_transformer.date_time'
-                    value: '1970-01-01 00:00:00'
-                nameDay:
-                    '@transformer': 'Pecserke\YamlFixturesBundle\Tests\Parser\TestPropertyValueTransformer'
-                    value: '1970-01-01'
-                roles: [ADMIN]
-                department: ~
-        
-        - class: \Pecserke\YamlFixturesBundle\Tests\Parser\AnotherTestObject
-          order: 2
-          transformer: '@object_transformer.test'
-          equal_condition: 'x'
-        
-        - class: \Pecserke\YamlFixturesBundle\Tests\Parser\AnotherTestObject
-          order: 3
-          equal_condition: ['x', 'y']
-        EOF);
+        $config = Yaml::parse(<<< YaML
+- class: Pecserke\YamlFixturesBundle\Parser\TestObject
+  order: 1
+  transformer: Pecserke\YamlFixturesBundle\Parser\TestObjectTransformer
+  data:
+    john_doe:
+        firstName: John
+        lastName: Doe
+        birthDay:
+            '@transformer': '@data_transformer.date_time'
+            value: '1970-01-01 00:00:00'
+        nameDay:
+            '@transformer': 'Pecserke\YamlFixturesBundle\Parser\TestPropertyValueTransformer'
+            value: '1970-01-01'
+        roles: [ADMIN]
+        department: ~
+
+- class: \Pecserke\YamlFixturesBundle\Parser\AnotherTestObject
+  order: 2
+  transformer: '@object_transformer.test'
+  equal_condition: 'x'
+
+- class: \Pecserke\YamlFixturesBundle\Parser\AnotherTestObject
+  order: 3
+  equal_condition: ['x', 'y']
+YaML
+        );
 
         $expected = [
             [
-                'class' => 'Pecserke\YamlFixturesBundle\Tests\Parser\TestObject',
+                'class' => 'Pecserke\YamlFixturesBundle\Parser\TestObject',
                 'order' => 1,
                 'equal_condition' => [],
-                'transformer' => 'Pecserke\YamlFixturesBundle\Tests\Parser\TestObjectTransformer',
+                'transformer' => 'Pecserke\YamlFixturesBundle\Parser\TestObjectTransformer',
                 'data' => [
                     [
                         '@reference' => 'john_doe',
@@ -80,7 +81,7 @@ class FixtureDataConfigurationTest extends TestCase {
                                 'value' => '1970-01-01 00:00:00'
                             ],
                             'nameDay' => [
-                                '@transformer' => 'Pecserke\YamlFixturesBundle\Tests\Parser\TestPropertyValueTransformer',
+                                '@transformer' => 'Pecserke\YamlFixturesBundle\Parser\TestPropertyValueTransformer',
                                 'value' => '1970-01-01'
                             ],
                             'roles' => ['ADMIN'],
@@ -90,14 +91,14 @@ class FixtureDataConfigurationTest extends TestCase {
                 ]
             ],
             [
-                'class' => '\Pecserke\YamlFixturesBundle\Tests\Parser\AnotherTestObject',
+                'class' => '\Pecserke\YamlFixturesBundle\Parser\AnotherTestObject',
                 'order' => 2,
                 'equal_condition' => ['x'],
                 'transformer' => '@object_transformer.test',
                 'data' => []
             ],
             [
-                'class' => '\Pecserke\YamlFixturesBundle\Tests\Parser\AnotherTestObject',
+                'class' => '\Pecserke\YamlFixturesBundle\Parser\AnotherTestObject',
                 'order' => 3,
                 'equal_condition' => ['x', 'y'],
                 'transformer' => null,
@@ -111,9 +112,10 @@ class FixtureDataConfigurationTest extends TestCase {
     }
 
     public function test_processConfiguration_withNonExistentFixtureClass_throwsException(): void {
-        $config = Yaml::parse(<<<EOF
-        - class: This\Class\Does\Not\Exist
-        EOF);
+        $config = Yaml::parse(<<< YaML
+- class: This\Class\Does\Not\Exist
+YaML
+        );
 
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Invalid configuration for path "fixtures.0.class": Class "This\\\\Class\\\\Does\\\\Not\\\\Exist" does not exist');
@@ -122,10 +124,11 @@ class FixtureDataConfigurationTest extends TestCase {
     }
 
     public function test_processConfiguration_withNonExistentObjectTransformerClass_throwsException(): void {
-        $config = Yaml::parse(<<<EOF
-        - class: Pecserke\YamlFixturesBundle\Tests\Parser\TestObject
-          transformer: This\Class\Does\Not\Exist
-        EOF);
+        $config = Yaml::parse(<<< YaML
+- class: Pecserke\YamlFixturesBundle\Parser\TestObject
+  transformer: This\Class\Does\Not\Exist
+YaML
+        );
 
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Invalid configuration for path "fixtures.0.transformer": Invalid object transformer: "This\\\\Class\\\\Does\\\\Not\\\\Exist"');
@@ -142,7 +145,7 @@ class AnotherTestObject {
 
 class TestObjectTransformer implements ObjectTransformerInterface {
     public function transform(array $data, string $className): object {
-        return null;
+        throw new RuntimeException('not implemented');
     }
 }
 

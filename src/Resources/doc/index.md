@@ -8,40 +8,34 @@ for the Doctrine ORM or ODM.
 
 ## Prerequisites
 
-This version of the bundle requires [Symfony 4.3+](http://symfony.com) and [Composer](http://getcomposer.org/).
+This version of the bundle requires
+[Symfony 4.3+](http://symfony.com),
+[Doctrine Fixtures Bundle](https://symfony.com/doc/current/bundles/DoctrineFixturesBundle/index.html), 
+and [Composer](http://getcomposer.org/).
 
 ## Installation
 
-Add PecserkeYamlFixturesBundle in your composer.json:
+If you have not yet installed Doctrine Fixtures Bundle, follow
+[these installation instructions](https://symfony.com/doc/current/bundles/DoctrineFixturesBundle/index.html#installation).
 
-``` js
-{
-    "require": {
-        "pecserke/yaml-fixtures-bundle": "dev-master"
-    }
-}
+Then open a command console, enter your project directory, 
+and run the following command to download the latest stable version of this bundle:
+
+```shell script
+$ php composer.phar require --dev pecserke/yaml-fixtures-bundle
 ```
 
-Now tell composer to download the bundle by running the command:
+If you're *not* using Symfony Flex, you will also need to enable the bundle in your `AppKernel` class:
 
-``` bash
-$ php composer.phar update pecserke/yaml-fixtures-bundle
-```
-
-Composer will install the bundle into your project's `vendor/pecserke` directory.
-
-Enable the bundle in the kernel:
-
-``` php
+```php
 <?php
 // app/AppKernel.php
 
-public function registerBundles()
-{
-    $bundles = array(
-        // ...
-        new Pecserke\YamlFixturesBundle\PecserkeYamlFixturesBundle(),
-    );
+// ...
+// registerBundles()
+if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
+    // ...
+    $bundles[] = new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle();
 }
 ```
 
@@ -49,7 +43,7 @@ public function registerBundles()
 
 Let's say we have an entity `Person` defined like this:
 
-``` php
+```php
 <?php
 namespace Acme\DemoBundle\Entity;
 
@@ -76,63 +70,51 @@ class Person
      */
     private $lastName;
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
-        return $this;
-    }
-
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-        return $this;
-    }
+    // getters and setters ...
 }
 ```
 
-All you need to do is create a file in your bundle's `Resources/fixtures` directory formatted like this:
+All you need to do is create a file in your projects's `fixtures` directory formatted like this:
 
-``` yaml
-# AcmeDemoBundle/Resources/fixtures/person.yml
-Acme\DemoBundle\Entity\Person:
-    data:
-        john_doe:
-            firstName: John
-            lastName: Doe
-        jane_doe:
-            firstName: Jane
-            lastName: Doe
+```yaml
+# fixtures/person.yml
+- class: Acme\DemoBundle\Entity\Person
+  data:
+    john_doe:
+      firstName: John
+      lastName: Doe
+    jane_doe:
+      firstName: Jane
+      lastName: Doe
 ```
+
+Property `data` contains data, that will be transformed into database objects.
+**Property of object must be public or accessible via setter method.**
+
+If your are using bundles in your project, you should place
+the fixture files belonging to the bundle into your bundle's `Resources/fixtures` directory.
+
+The bundle fixtures can be "overridden" using resource overriding mechanism.
+Any fixture file placed into `fixtures/bundles/<bundle_name>` directory will "override"
+files with same relative path, just like
+[Symfony bundle resource overriding](https://symfony.com/doc/current/bundles/override.html) works.
+Overridden files will *not* be loaded - no merging is done.
 
 It's also possible to place your YaML fixtures into `app/Resources/YourBundleName/fixtures` directory.
 In that case all files with same filename in in your bundle's `Resources/fixtures` directory
 will be "overridden" by those from `app/Resources`. No merging is done.
 
-Property `data` contains data, that will be transformed into database objects.
-**Property of object must be public or accessible via setter method.**
-
 ## Loading fixtures
 
-YaML fixtures are loaded in similar way to ordinary fixtures:
+YaML fixtures are loaded the same way as ordinary fixtures:
 
-``` shell
-$ php app/console pecserke:fixtures:yml:load
+```shell script
+# when using the ORM
+$ php bin/console doctrine:fixtures:load
 ```
+
+> **Warning:** By default the load command purges the database, removing all data from every table.
+> To append your fixtures' data add the `--append` option.
 
 ## Using references
 

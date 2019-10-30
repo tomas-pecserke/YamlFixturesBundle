@@ -9,22 +9,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Pecserke\YamlFixturesBundle\DataFixtures;
+namespace Pecserke\YamlFixturesBundle\Fixture;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 
-class OrderedFixtureArrayDataFixture extends FixtureArrayDataFixture implements OrderedFixtureInterface {
+abstract class OrderedFixtureArrayDataFixture extends FixtureArrayDataFixture implements OrderedFixtureInterface {
     /**
      * @var int
      */
-    private $order;
-
-    public function __construct(FixtureArrayDataLoaderInterface $loader, array $fixtureData, int $order) {
-        parent::__construct($loader, $fixtureData);
-        $this->order = $order;
-    }
+    private $order = 0;
 
     public function getOrder(): int {
         return $this->order;
+    }
+
+    public function setOrder(int $order): void {
+        $this->order = $order;
     }
 }

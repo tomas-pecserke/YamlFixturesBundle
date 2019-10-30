@@ -37,12 +37,12 @@ class ArrayFixturesLoader {
         $this->eventDispatcher->addListener(Events::POST_PERSIST, [new PostPersistListener($evaluator), 'postPersist']);
     }
 
-    public function load(array $fixture, ObjectManager $manager) {
-        $transformerDefinition = isset($fixture['transformer']) ? $fixture['transformer'] : null;
+    public function load(array $fixture, ObjectManager $manager): void {
+        $transformerDefinition = $fixture['transformer'] ?? null;
         $transformer = $this->evaluator->resolveObjectTransformer($transformerDefinition);
 
         $class = $fixture['class'];
-        $equalCondition = isset($fixture['equal_condition']) ? $fixture['equal_condition'] : null;
+        $equalCondition = $fixture['equal_condition'] ?? null;
         foreach ($fixture['data'] as $referenceName => $data) {
             $this->loadFixtureObject($manager, $transformer, $referenceName, $class, $data, $equalCondition);
         }
@@ -57,10 +57,8 @@ class ArrayFixturesLoader {
         $className,
         array $data,
         $equalCondition
-    ) {
-        $postPersist = isset($data[FixtureObjectArrayDataEvaluator::POST_PERSIST_ANNOTATION]) ?
-            $data[FixtureObjectArrayDataEvaluator::POST_PERSIST_ANNOTATION] :
-            null;
+    ): void {
+        $postPersist = $data[FixtureObjectArrayDataEvaluator::POST_PERSIST_ANNOTATION] ?? null;
         unset($data[FixtureObjectArrayDataEvaluator::POST_PERSIST_ANNOTATION]);
 
         $data = $this->evaluator->evaluate($data);
@@ -78,12 +76,12 @@ class ArrayFixturesLoader {
         $manager->persist($object);
         $referenceRepository->addReference($referenceName, $object);
         $this->eventDispatcher->dispatch(
-            Events::POST_PERSIST,
-            new PostPersistEvent($object, $referenceName, $postPersist)
+            new PostPersistEvent($object, $referenceName, $postPersist),
+            Events::POST_PERSIST
         );
     }
 
-    protected function getSame($object, array $equalCondition, ObjectManager $manager) {
+    protected function getSame($object, array $equalCondition, ObjectManager $manager): array {
         $conditions = array();
         $accessor = PropertyAccess::createPropertyAccessor();
 

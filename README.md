@@ -9,14 +9,14 @@ PecserkeYamlFixturesBundle
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/71307559-fa0c-4e0c-9a88-a0b3dcf97825/mini.png)](https://insight.sensiolabs.com/projects/71307559-fa0c-4e0c-9a88-a0b3dcf97825)
 [![Coverage Status](https://coveralls.io/repos/github/tomas-pecserke/YamlFixturesBundle/badge.svg?branch=master)](https://coveralls.io/github/tomas-pecserke/YamlFixturesBundle?branch=master)
 
-This bundle for Symfony 2 allows you to write your
-[Doctrine2 Data Fixtures](https://github.com/doctrine/data-fixtures) in [YaML](http://www.yaml.org/)
-for both ORM and ODM. Define your progamatically loaded fixtures data in easily readable, structured way.
+This bundle for Symfony 4+ allows you to write your
+[Doctrine2 Data Fixtures](https://github.com/doctrine/data-fixtures) in [YaML](http://www.yaml.org/) format
+for both ORM and ODM. Define your programmatically loaded fixtures data in easily readable, structured way.
 
 Installation
 ------------
 
-Installation instructions are located in [documentation](Resources/doc/index.md).
+Installation instructions are located in [documentation](src/Resources/doc/index.md).
 
 License
 -------

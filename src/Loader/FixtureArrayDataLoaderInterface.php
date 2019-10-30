@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Pecserke\YamlFixturesBundle\DataFixtures;
+namespace Pecserke\YamlFixturesBundle\Loader;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
