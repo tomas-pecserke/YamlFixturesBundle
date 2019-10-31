@@ -19,7 +19,6 @@ use Pecserke\YamlFixturesBundle\Parser\FixtureDataConfiguration;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -29,8 +28,10 @@ class RegisterFixturesCompilerPass implements CompilerPassInterface {
     public function process(ContainerBuilder $container): void {
         $locator = new FixtureLocator();
 
-        $projectRootDir = self::getProjectDir($container);
-        $bundles = self::getBundles($container);
+        /* @var string $projectRootDir */
+        $projectRootDir = $container->getParameter('kernel.project_dir');
+        /* @var BundleInterface[] $bundles */
+        $bundles = $container->getParameter('kernel.bundles');
         $fixtures = [];
 
         $projectFixtureFiles = $locator->findFixturesInProjectDirectory($projectRootDir);
@@ -74,17 +75,5 @@ class RegisterFixturesCompilerPass implements CompilerPassInterface {
 
             $container->setDefinition($definition->getClass(), $definition);
         }
-    }
-
-    private static function getProjectDir(ContainerInterface $container): string {
-        return $container->getParameter('kernel.project_dir');
-    }
-
-    /**
-     * @param ContainerInterface $container
-     * @return BundleInterface[]
-     */
-    private static function getBundles(ContainerInterface $container): array {
-        return $container->getParameter('kernel.bundles');
     }
 }

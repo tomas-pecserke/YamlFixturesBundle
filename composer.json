@@ -47,7 +47,8 @@
     },
     "suggest": {
         "doctrine/orm": "Support for relation database fixtures",
-        "doctrine/mongodb-odm": "Support for mongo database fixtures"
+        "doctrine/mongodb-odm": "Support for mongo database fixtures",
+        "doctrine/doctrine-migrations-bundle": "Database migrations help you version the changes in your database schema and apply them in a predictable way on every server running the application."
     },
     "minimum-stability": "stable",
     "extra": {
