@@ -27,13 +27,14 @@ class FixtureLocator {
         }
 
         $files = Finder::create()->files()->name(['*.yml', '*.yaml'])->in($dir)->exclude(['bundles'])->getIterator();
-
-        return array_map(
+        $paths = array_map(
             static function (SplFileInfo $file) {
                 return $file->getPathname();
             },
             iterator_to_array($files)
         );
+
+        return array_keys($paths);
     }
 
     /**
