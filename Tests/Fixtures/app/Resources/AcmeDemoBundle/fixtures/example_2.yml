@@ -1,4 +1,4 @@
-Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
+Pecserke\YamlFixturesBundle\Stubs\ExampleObject:
     order: 2
     equal_condition: [ publicProperty ]
     data:

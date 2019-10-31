@@ -17,10 +17,10 @@ use InvalidArgumentException;
 use OutOfBoundsException;
 use Pecserke\YamlFixturesBundle\DataFixtures\ArrayFixturesLoader;
 use Pecserke\YamlFixturesBundle\DataFixtures\FixtureObjectArrayDataEvaluator;
-use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformer;
+use Pecserke\YamlFixturesBundle\Stubs\ExampleObject;
+use Pecserke\YamlFixturesBundle\Transformer\ObjectTransformer;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataFixtures\InMemoryObjectManager;
 use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer;
-use Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
@@ -63,7 +63,7 @@ class ArrayFixturesLoaderTest extends TestCase {
 
     public function testLoad() {
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object.0' => array(
                     'publicProperty' => 'value1',
@@ -95,7 +95,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectException(NoSuchPropertyException::class);
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array('privateProperty' => 'value1')
             )
@@ -107,7 +107,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectException(NoSuchPropertyException::class);
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array('notExistProperty' => 'value1')
             )
@@ -118,7 +118,7 @@ class ArrayFixturesLoaderTest extends TestCase {
     public function testLoadParameter() {
         $parameterName = 'test.param';
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => "#$parameterName")
             )
@@ -137,7 +137,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => '#parameter_that_dont_exist')
             )
@@ -148,7 +148,7 @@ class ArrayFixturesLoaderTest extends TestCase {
     public function testLoadReference() {
         $referenceName = 'example.reference';
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => "@$referenceName")
             )
@@ -167,7 +167,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectException(OutOfBoundsException::class);
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array('publicProperty' => '@reference_that_does_not_exist')
             )
@@ -178,7 +178,7 @@ class ArrayFixturesLoaderTest extends TestCase {
     public function testLoadDataTransformerService() {
         $transformerServiceName = 'example.reference';
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => array(
@@ -201,7 +201,7 @@ class ArrayFixturesLoaderTest extends TestCase {
     public function testLoadDataTransformerClassName() {
         $transformerClassName = 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\DateTimeDataTransformer';
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => array(
@@ -223,7 +223,7 @@ class ArrayFixturesLoaderTest extends TestCase {
     public function testLoadPostPersist() {
         $referenceName = 'example.reference';
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
@@ -248,7 +248,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectExceptionMessage('object expected');
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
@@ -265,7 +265,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectExceptionMessage('array [$object, $method, $params] expected');
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
@@ -287,7 +287,7 @@ class ArrayFixturesLoaderTest extends TestCase {
 
         $referenceName = 'example.reference';
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => 'value',
@@ -306,7 +306,7 @@ class ArrayFixturesLoaderTest extends TestCase {
 
     public function testLoadCustomObjectTransformerClassName() {
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'transformer' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ObjectTransformer',
             'data' => array(
                 'example.object' => array('publicProperty' => 'now')
@@ -324,7 +324,7 @@ class ArrayFixturesLoaderTest extends TestCase {
     public function testLoadCustomObjectTransformerService() {
         $serviceName = 'object_transformer.all_date_time';
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'transformer' => "@$serviceName",
             'data' => array(
                 'example.object' => array('publicProperty' => 'now')
@@ -345,7 +345,7 @@ class ArrayFixturesLoaderTest extends TestCase {
 
     public function testLoadFixtureEqualCondition() {
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'equal_condition' => array('publicProperty'),
             'data' => array(
                 'example.object.0' => array(
@@ -365,7 +365,7 @@ class ArrayFixturesLoaderTest extends TestCase {
 
     public function testLoadFixtureEqualConditionDuplicate() {
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'equal_condition' => array('publicProperty'),
             'data' => array(
                 'example.object.0' => array(
@@ -387,7 +387,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectException(NoSuchPropertyException::class);
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'equal_condition' => array('privateProperty'),
             'data' => array(
                 'example.object.2' => array(
@@ -407,7 +407,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectException(NoSuchPropertyException::class);
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'equal_condition' => array('notExistProperty'),
             'data' => array(
                 'example.object.2' => array(
@@ -428,7 +428,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectExceptionMessage('data transformer \'stdClass\' is not an instance of Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface');
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'transformer' => '\stdclass'
         );
         $this->loader->load($fixture, $this->manager);
@@ -439,7 +439,7 @@ class ArrayFixturesLoaderTest extends TestCase {
         $this->expectExceptionMessage('data transformer \'stdClass\' is not an instance of Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface');
 
         $fixture = array(
-            'class' => 'Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject',
+            'class' => 'Pecserke\YamlFixturesBundle\Stubs\ExampleObject',
             'data' => array(
                 'example.object' => array(
                     'publicProperty' => array(

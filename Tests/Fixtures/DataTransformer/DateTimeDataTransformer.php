@@ -13,9 +13,9 @@ namespace Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer;
 
 use DateTime;
 use Exception;
-use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\PropertyValueTransformerInterface;
 
-class DateTimeDataTransformer implements DataTransformerInterface {
+class DateTimeDataTransformer implements PropertyValueTransformerInterface {
     /**
      * @param $data
      * @return DateTime

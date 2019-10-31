@@ -118,7 +118,7 @@ class YamlFixtureFileParserTest extends TestCase {
         $file = vfsStream::url('testDir/testFile.yml');
         file_put_contents(
             $file,
-            'Pecserke\\YamlFixturesBundle\\Tests\\Fixtures\\DataTransformer\\ExampleObject: { order: not int }'
+            'Pecserke\\YamlFixturesBundle\\Stubs\\ExampleObject: { order: not int }'
         );
         $parser = new YamlFixtureFileParser();
         $parser->parse(array($file));
@@ -127,7 +127,7 @@ class YamlFixtureFileParserTest extends TestCase {
     public function testParseUnorderedAfterOrdered() {
         $file = vfsStream::url('testDir/1.yml');
         file_put_contents($file, <<< YaML
-Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
+Pecserke\YamlFixturesBundle\Stubs\ExampleObject:
     data:
         example.object.0:
             publicProperty: value0
@@ -135,7 +135,7 @@ YaML
         );
         $file2 = vfsStream::url('testDir/2.yml');
         file_put_contents($file2, <<< YaML
-Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
+Pecserke\YamlFixturesBundle\Stubs\ExampleObject:
     order: 3
     data:
         example.object.1:
