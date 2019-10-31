@@ -55,14 +55,12 @@ class FixtureObjectArrayDataEvaluator implements ContainerAwareInterface {
     }
 
     public function evaluate(array $array) {
-        $dataTransformer = !empty($array[self::DATA_TRANSFORMER_ANNOTATION])
-            ? $array[self::DATA_TRANSFORMER_ANNOTATION]
-            : null;
+        $dataTransformer = $array[self::DATA_TRANSFORMER_ANNOTATION] ?? null;
         unset($array[self::DATA_TRANSFORMER_ANNOTATION]);
         if ($dataTransformer !== null) {
-            $dataTransformer = ($dataTransformer{0} === '@') ?
-                $this->container->get(substr($dataTransformer, 1)) :
-                new $dataTransformer();
+            $dataTransformer = strpos($dataTransformer, '@') === 0
+                ? $this->container->get(substr($dataTransformer, 1))
+                : new $dataTransformer();
 
             if (!($dataTransformer instanceof PropertyValueTransformerInterface)) {
                 $class = get_class($dataTransformer);
