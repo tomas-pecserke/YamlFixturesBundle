@@ -12,8 +12,8 @@
 namespace Pecserke\YamlFixturesBundle\Parser;
 
 use Closure;
-use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
-use Pecserke\YamlFixturesBundle\DataTransformer\PropertyValueTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\ObjectTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\PropertyValueTransformerInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -29,6 +29,7 @@ class FixtureDataConfiguration implements ConfigurationInterface {
         $rootNode
             ->arrayPrototype()
                 ->children()
+                    ->scalarNode('file')->isRequired()->cannotBeEmpty()->end()
                     ->scalarNode('class')
                         ->isRequired()
                         ->cannotBeEmpty()

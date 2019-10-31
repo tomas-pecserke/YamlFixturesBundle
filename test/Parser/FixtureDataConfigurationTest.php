@@ -11,8 +11,8 @@
 
 namespace Pecserke\YamlFixturesBundle\Parser;
 
-use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
-use Pecserke\YamlFixturesBundle\DataTransformer\PropertyValueTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\ObjectTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\PropertyValueTransformerInterface;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -63,6 +63,9 @@ class FixtureDataConfigurationTest extends TestCase {
   equal_condition: ['x', 'y']
 YaML
         );
+        foreach (array_keys($config) as $key) {
+            $config[$key]['file'] = 'test_file.yml';
+        }
 
         $expected = [
             [
@@ -88,21 +91,24 @@ YaML
                             'department' => null
                         ]
                     ]
-                ]
+                ],
+                'file' => 'test_file.yml'
             ],
             [
                 'class' => '\Pecserke\YamlFixturesBundle\Parser\AnotherTestObject',
                 'order' => 2,
                 'equal_condition' => ['x'],
                 'transformer' => '@object_transformer.test',
-                'data' => []
+                'data' => [],
+                'file' => 'test_file.yml'
             ],
             [
                 'class' => '\Pecserke\YamlFixturesBundle\Parser\AnotherTestObject',
                 'order' => 3,
                 'equal_condition' => ['x', 'y'],
                 'transformer' => null,
-                'data' => []
+                'data' => [],
+                'file' => 'test_file.yml'
             ]
         ];
 
@@ -116,6 +122,7 @@ YaML
 - class: This\Class\Does\Not\Exist
 YaML
         );
+        $config[0]['file'] = 'test_file.yml';
 
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Invalid configuration for path "fixtures.0.class": Class "This\\\\Class\\\\Does\\\\Not\\\\Exist" does not exist');
@@ -129,6 +136,7 @@ YaML
   transformer: This\Class\Does\Not\Exist
 YaML
         );
+        $config[0]['file'] = 'test_file.yml';
 
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Invalid configuration for path "fixtures.0.transformer": Invalid object transformer: "This\\\\Class\\\\Does\\\\Not\\\\Exist"');

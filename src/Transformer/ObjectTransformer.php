@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Pecserke\YamlFixturesBundle\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\Transformer;
 
 use InvalidArgumentException;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
@@ -21,17 +21,17 @@ class ObjectTransformer implements ObjectTransformerInterface {
      *
      * For each key of the array public property is set if exists,
      * otherwise the setter or add method is called if exists.
-     * If none of above applies, an InvalidArgumentException is thrown.
+     * If none of the above applies, an NoSuchPropertyException is thrown.
      *
-     * @param array $data
-     * @param string
-     * @return object
-     * @throws NoSuchPropertyException
-     * @throws InvalidArgumentException
+     * @param array $data transformation data
+     * @param string transformed object class name
+     * @return object transformed object
+     * @throws NoSuchPropertyException if property cannot be set
+     * @throws InvalidArgumentException if class does not exist
      */
     public function transform(array $data, string $className): object {
         if (!class_exists($className)) {
-            throw new InvalidArgumentException("class '$className' does not exist");
+            throw new InvalidArgumentException("Class '$className' does not exist");
         }
 
         $object = new $className();

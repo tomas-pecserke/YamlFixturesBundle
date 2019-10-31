@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Pecserke\YamlFixturesBundle\DataTransformer;
+namespace Pecserke\YamlFixturesBundle\Transformer;
 
 use InvalidArgumentException;
 

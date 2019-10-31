@@ -89,4 +89,18 @@ class FixtureArrayDataFixtureTest extends TestCase {
 
         $this->fixture->load($this->manager);
     }
+
+    public function testGetFixtureDataReturnsValuePreviouslySet(): void {
+        $data = [];
+        $this->fixture->setFixtureData($data);
+
+        $this->assertSame($data, $this->fixture->getFixtureData());
+    }
+
+    public function testGetFixtureWithoutPreviouslySetValueThrowsException(): void {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Fixture data were not set');
+
+        $this->fixture->getFixtureData();
+    }
 }

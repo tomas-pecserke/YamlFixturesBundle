@@ -12,7 +12,7 @@
 namespace Pecserke\YamlFixturesBundle\DependencyInjection;
 
 use Exception;
-use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\ObjectTransformerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

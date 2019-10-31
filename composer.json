@@ -2,7 +2,7 @@
     "name": "pecserke/yaml-fixtures-bundle",
     "type": "symfony-bundle",
     "description": "Symfony PecserkeYamlFixturesBundle",
-    "keywords": [ "Data fixtures", "Doctrine" ],
+    "keywords": [ "Data fixtures", "Doctrine", "YaML" ],
     "homepage": "https://github.com/tomas-pecserke/YamlFixturesBundle",
     "license": "MIT",
     "authors": [
@@ -52,8 +52,7 @@
     "minimum-stability": "stable",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0.x-dev",
-            "dev-1.1.x": "1.1.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }

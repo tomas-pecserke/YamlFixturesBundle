@@ -41,6 +41,14 @@ abstract class FixtureArrayDataFixture implements SharedFixtureInterface {
         $this->loader = $loader;
     }
 
+    public function getFixtureData(): array {
+        if ($this->fixtureData === null) {
+            throw new LogicException('Fixture data were not set');
+        }
+
+        return $this->fixtureData;
+    }
+
     public function setFixtureData(array $fixtureData): void {
         $this->fixtureData = $fixtureData;
     }

@@ -126,9 +126,7 @@ class YamlFixtureFileParserTest extends TestCase {
 
     public function testParseUnorderedAfterOrdered() {
         $file = vfsStream::url('testDir/1.yml');
-        file_put_contents(
-            $file,
-            <<< YaML
+        file_put_contents($file, <<< YaML
 Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
     data:
         example.object.0:
@@ -136,9 +134,7 @@ Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
 YaML
         );
         $file2 = vfsStream::url('testDir/2.yml');
-        file_put_contents(
-            $file2,
-            <<< YaML
+        file_put_contents($file2, <<< YaML
 Pecserke\YamlFixturesBundle\Tests\Fixtures\DataTransformer\ExampleObject:
     order: 3
     data:
