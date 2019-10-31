@@ -12,10 +12,10 @@
 namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
 use Pecserke\YamlFixturesBundle\Event\Events;
 use Pecserke\YamlFixturesBundle\Event\PostPersistEvent;
 use Pecserke\YamlFixturesBundle\Listener\PostPersistListener;
+use Pecserke\YamlFixturesBundle\Transformer\ObjectTransformerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;

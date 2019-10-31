@@ -11,7 +11,7 @@
 
 namespace Pecserke\YamlFixturesBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class FixtureObjectEvent extends Event {
     /**

@@ -13,8 +13,8 @@ namespace Pecserke\YamlFixturesBundle\DataFixtures;
 
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use InvalidArgumentException;
-use Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface;
-use Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\ObjectTransformerInterface;
+use Pecserke\YamlFixturesBundle\Transformer\PropertyValueTransformerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -22,12 +22,12 @@ class FixtureObjectArrayDataEvaluator implements ContainerAwareInterface {
     /**
      * @var string
      */
-    const POST_PERSIST_ANNOTATION = '@postPersist';
+    public const POST_PERSIST_ANNOTATION = '@postPersist';
 
     /**
      * @var string
      */
-    const DATA_TRANSFORMER_ANNOTATION = '@dataTransformer';
+    public const DATA_TRANSFORMER_ANNOTATION = '@dataTransformer';
 
     /**
      * @var ContainerInterface
@@ -39,18 +39,18 @@ class FixtureObjectArrayDataEvaluator implements ContainerAwareInterface {
      */
     private $referenceRepository;
 
-    public function setContainer(ContainerInterface $container = null) {
+    public function setContainer(ContainerInterface $container = null): void {
         $this->container = $container;
     }
 
     /**
      * @return ReferenceRepository
      */
-    public function getReferenceRepository() {
+    public function getReferenceRepository(): ReferenceRepository {
         return $this->referenceRepository;
     }
 
-    public function setReferenceRepository(ReferenceRepository $referenceRepository) {
+    public function setReferenceRepository(ReferenceRepository $referenceRepository): void {
         $this->referenceRepository = $referenceRepository;
     }
 
@@ -64,7 +64,7 @@ class FixtureObjectArrayDataEvaluator implements ContainerAwareInterface {
                 $this->container->get(substr($dataTransformer, 1)) :
                 new $dataTransformer();
 
-            if (!($dataTransformer instanceof DataTransformerInterface)) {
+            if (!($dataTransformer instanceof PropertyValueTransformerInterface)) {
                 $class = get_class($dataTransformer);
                 $expected = 'Pecserke\YamlFixturesBundle\DataTransformer\DataTransformerInterface';
                 throw new InvalidArgumentException("data transformer '$class' is not an instance of $expected");
@@ -98,15 +98,13 @@ class FixtureObjectArrayDataEvaluator implements ContainerAwareInterface {
      * @param string $transformerDefinition
      * @return ObjectTransformerInterface
      */
-    public function resolveObjectTransformer($transformerDefinition) {
+    public function resolveObjectTransformer($transformerDefinition): ObjectTransformerInterface {
         if (!empty($transformerDefinition)) {
-            $transformer = ($transformerDefinition{0} === '@') ?
-                $this->container->get(substr($transformerDefinition, 1)) :
-                new $transformerDefinition();
+            $transformer = strpos($transformerDefinition, '@') === 0
+                ? $this->container->get(substr($transformerDefinition, 1))
+                : new $transformerDefinition();
         }
-        $transformer = isset($transformer) ?
-            $transformer :
-            $this->container->get('pecserke_fixtures.object_transformer');
+        $transformer = $transformer ?? $this->container->get('pecserke_fixtures.object_transformer.default');
         if (!($transformer instanceof ObjectTransformerInterface)) {
             $class = get_class($transformer);
             $expected = 'Pecserke\YamlFixturesBundle\DataTransformer\ObjectTransformerInterface';
