@@ -9,13 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Pecserke\YamlFixturesBundle\Fixture;
+namespace Pecserke\YamlFixturesBundle\Finder;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class FixtureLocator {
+class FixtureFinder {
     /**
      * @param string $projectRootDir
      * @return string[]

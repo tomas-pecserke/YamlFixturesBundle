@@ -13,7 +13,7 @@ namespace Pecserke\YamlFixturesBundle\DependencyInjection\Compiler;
 
 use Doctrine\Bundle\FixturesBundle\DependencyInjection\CompilerPass\FixturesCompilerPass;
 use Pecserke\YamlFixturesBundle\Autoloader\DynamicFixtureArrayDataFixtureClassAutoloader;
-use Pecserke\YamlFixturesBundle\Fixture\FixtureLocator;
+use Pecserke\YamlFixturesBundle\Finder\FixtureFinder;
 use Pecserke\YamlFixturesBundle\Loader\FixtureArrayDataLoaderInterface;
 use Pecserke\YamlFixturesBundle\Parser\FixtureDataConfiguration;
 use Symfony\Component\Config\Definition\Processor;
@@ -26,7 +26,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class RegisterFixturesCompilerPass implements CompilerPassInterface {
     public function process(ContainerBuilder $container): void {
-        $locator = new FixtureLocator();
+        $locator = new FixtureFinder();
 
         /* @var string $projectRootDir */
         $projectRootDir = $container->getParameter('kernel.project_dir');

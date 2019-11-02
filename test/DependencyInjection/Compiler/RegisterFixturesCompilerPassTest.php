@@ -39,22 +39,17 @@ class RegisterFixturesCompilerPassTest extends TestCase {
     private $bundle;
 
     /**
-     * @var string
-     */
-    private $bundleName;
-
-    /**
      * @var ContainerBuilder
      */
     private $container;
 
     /**
-     * @var string
+     * @var vfsStreamDirectory
      */
     private $bundleDir;
 
     /**
-     * @var string
+     * @var vfsStreamDirectory
      */
     private $projectDir;
 
@@ -67,24 +62,19 @@ class RegisterFixturesCompilerPassTest extends TestCase {
      * @throws vfsStreamException
      */
     public function setUp(): void {
+        $rootDir = vfsStream::setup('locatorTestDir', null, ['bundle' => [], 'project' => []]);
+        $this->bundleDir = $rootDir->getChild('bundle');
+        $this->projectDir = $rootDir->getChild('project');
         vfsStreamWrapper::register();
-        vfsStreamWrapper::setRoot(new vfsStreamDirectory('compilerTestDir'));
-
-        $rootDir = vfsStream::url('compilerTestDir');
-        $this->bundleDir = $rootDir . '/bundle';
-        mkdir($this->bundleDir);
-        $this->projectDir = $rootDir . '/project';
-        mkdir($this->projectDir);
-
-        $this->bundleName = 'TestBundle';
+        vfsStreamWrapper::setRoot($rootDir);
 
         $this->bundle = $this->getMockForAbstractClass(BundleInterface::class);
-        $this->bundle->method('getPath')->willReturn($this->bundleDir);
-        $this->bundle->method('getName')->willReturn($this->bundleName);
+        $this->bundle->method('getName')->willReturn('TestBundle');
+        $this->bundle->method('getPath')->willReturn($this->bundleDir->url());
 
         $this->container = new ContainerBuilder(new ParameterBag());
         $this->container->setParameter('kernel.bundles', [$this->bundle]);
-        $this->container->setParameter('kernel.project_dir', $this->projectDir);
+        $this->container->setParameter('kernel.project_dir', $this->projectDir->url());
         $this->container->set(
             FixtureArrayDataLoaderInterface::class,
             $this->getMockForAbstractClass(FixtureArrayDataLoaderInterface::class)
@@ -100,18 +90,8 @@ class RegisterFixturesCompilerPassTest extends TestCase {
      * @throws Exception
      */
     public function testRegistersFixturesAsTaggedServicesIncludingOverriding(): void {
-        mkdir($this->projectDir . '/fixtures', 0777, true);
-        file_put_contents($this->projectDir . '/fixtures/example_1.yml', <<< YaML
-- class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
-  order: 1
-  data:
-    example.object.4:
-      publicProperty: value4
-YaML
-        );
-
-        mkdir($this->bundleDir . '/Resources/fixtures', 0777, true);
-        file_put_contents($this->bundleDir . '/Resources/fixtures/example_2.yml', <<< YaML
+        $bundleStructure = ['Resources' => ['fixtures' => [
+            'example_2.yml' => <<< YaML
 - class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
   order: 3
   equal_condition: [ publicProperty ]
@@ -121,24 +101,37 @@ YaML
     example.object.1:
       publicProperty: value1
 YaML
-        );
-        file_put_contents($this->bundleDir . '/Resources/fixtures/example_3.yaml', <<< YaML
+            ,
+            'example_3.yaml' => <<< YaML
 - class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
   order: 2
   equal_condition: [ publicProperty ]
   data:
 YaML
-        );
-        $overrideDir = $this->projectDir . '/fixtures/bundles/' . $this->bundleName;
-        mkdir($overrideDir, 0777, true);
-        file_put_contents($overrideDir . '/example_2.yml', <<< YaML
+        ]]];
+        vfsStream::create($bundleStructure, $this->bundleDir);
+
+        $projectStructure = ['fixtures' => [
+            'bundles' => [$this->bundle->getName() => [
+                'example_2.yml' => <<< YaML
 - class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
   equal_condition: [ publicProperty ]
   data:
     example.object.2:
       publicProperty: value2
 YaML
-        );
+            ]],
+            'example_1.yml' => <<< YaML
+- class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
+  order: 1
+  data:
+    example.object.4:
+      publicProperty: value4
+YaML
+        ]];
+        vfsStream::create($projectStructure, $this->projectDir);
+
+        $overrideDir = $this->projectDir->url() . '/fixtures/bundles/' . $this->bundle->getName();
 
         $this->compilerPass->process($this->container);
         $taggedServiceIds = $this->container->findTaggedServiceIds(FixturesCompilerPass::FIXTURE_TAG);
@@ -157,9 +150,9 @@ YaML
         );
         $this->assertEquals(
             [
-                ['class' => ExampleObject::class, 'file' => $this->projectDir . '/fixtures/example_1.yml'],
+                ['class' => ExampleObject::class, 'file' => $this->projectDir->url() . '/fixtures/example_1.yml'],
                 ['class' => ExampleObject::class, 'file' => $overrideDir . '/example_2.yml'],
-                ['class' => ExampleObject::class, 'file' => $this->bundleDir . '/Resources/fixtures/example_3.yaml']
+                ['class' => ExampleObject::class, 'file' => $this->bundleDir->url() . '/Resources/fixtures/example_3.yaml']
             ],
             $types
         );
