@@ -25,7 +25,17 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class RegisterFixturesCompilerPass implements CompilerPassInterface {
+    /**
+     * @var DynamicFixtureArrayDataFixtureClassAutoloader
+     */
+    private $autoloader;
+
+    public function __construct(DynamicFixtureArrayDataFixtureClassAutoloader $autoloader) {
+        $this->autoloader = $autoloader;
+    }
+
     public function process(ContainerBuilder $container): void {
+        $classNamePrefix = $container->getParameter('pecserke_yaml_fixtures.fixture_class_prefix');
         $locator = new FixtureFinder();
 
         /* @var string $projectRootDir */
@@ -55,25 +65,56 @@ class RegisterFixturesCompilerPass implements CompilerPassInterface {
         }
 
         $processor = new Processor();
-        $configuration = new FixtureDataConfiguration();
+        $configuration = new FixtureDataConfiguration($classNamePrefix);
         $config = $processor->processConfiguration($configuration, $fixtures);
 
-        $i = 0;
         foreach ($config as $fixtureData) {
-            $definition = new Definition();
+            $classname = static::getFixtureClassName($fixtureData, $classNamePrefix);
+            $ordered = isset($fixtureData['order']);
+            $dependent = !empty($fixtureData['dependencies']);
+            $this->autoloader->registerFixtureClass($classname, $ordered, $dependent);
+
+            $definition = new Definition($classname);
             $definition->addMethodCall('setLoader', [new Reference(FixtureArrayDataLoaderInterface::class)]);
             $definition->addMethodCall('setFixtureData', [$fixtureData]);
+            $definition->addTag(FixturesCompilerPass::FIXTURE_TAG);
 
-            $classname = DynamicFixtureArrayDataFixtureClassAutoloader::CLASS_NAME_BASE;
-            if ($fixtureData['order']) {
-                $classname .= DynamicFixtureArrayDataFixtureClassAutoloader::ORDERED_SUFFIX;
+            if ($ordered) {
                 $definition->addMethodCall('setOrder', [$fixtureData['order']]);
             }
-
-            $definition->setClass($classname . '_' . $i++);
-            $definition->addTag(FixturesCompilerPass::FIXTURE_TAG);
+            if ($dependent) {
+                $dependencyClasses = array_map(
+                    static function (string $dependency) use ($classNamePrefix) {
+                        return class_exists($dependency) ? $dependency : $classNamePrefix . $dependency;
+                    },
+                    $fixtureData['dependencies']
+                );
+                $definition->addMethodCall('setDependencies', [$dependencyClasses]);
+            }
 
             $container->setDefinition($definition->getClass(), $definition);
         }
+    }
+
+    private static function getFixtureClassName(array $fixtureData, string $classNamePrefix): string {
+        return $classNamePrefix . self::getFixtureName($fixtureData);
+    }
+
+    private static function getFixtureName(array $fixtureData): string {
+        return !empty($fixtureData['set_name'])
+            ? $fixtureData['set_name']
+            : static::normalizeFileName($fixtureData['file']);
+    }
+
+    private static function normalizeFileName(string $filename): string {
+        $filename = basename($filename);
+        $index = strrpos($filename, '.');
+        if ($index !== false) {
+            $filename = substr($filename, 0, $index);
+        }
+        /* @noinspection NotOptimalRegularExpressionsInspection */
+        preg_replace('/[^a-zA-Z0-9_]/', '_', $filename);
+
+        return $filename;
     }
 }

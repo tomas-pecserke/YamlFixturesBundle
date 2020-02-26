@@ -24,6 +24,11 @@ class PecserkeYamlFixturesExtension extends Extension {
      * @throws Exception
      */
     public function load(array $configs, ContainerBuilder $container): void {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter('pecserke_yaml_fixtures.fixture_class_prefix', $config['fixture_class_prefix']);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
     }

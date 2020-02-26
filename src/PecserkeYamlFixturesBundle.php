@@ -29,7 +29,7 @@ class PecserkeYamlFixturesBundle extends Bundle {
 
     public function build(ContainerBuilder $container): void {
         parent::build($container);
-        $container->addCompilerPass(new RegisterFixturesCompilerPass());
+        $container->addCompilerPass(new RegisterFixturesCompilerPass($this->autoloader));
     }
 
     public function boot(): void {

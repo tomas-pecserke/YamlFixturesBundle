@@ -11,6 +11,7 @@
 
 namespace Pecserke\YamlFixturesBundle\Parser;
 
+use Pecserke\YamlFixturesBundle\Fixture\FixtureArrayDataFixture;
 use Pecserke\YamlFixturesBundle\Transformer\ObjectTransformerInterface;
 use Pecserke\YamlFixturesBundle\Transformer\PropertyValueTransformerInterface;
 use PHPUnit\Framework\TestCase;
@@ -30,9 +31,14 @@ class FixtureDataConfigurationTest extends TestCase {
      */
     private $processor;
 
+    /**
+     * @var string
+     */
+    private $classNamePrefix = 'Test\\ClassName\\';
+
     protected function setUp(): void {
         $this->processor = new Processor();
-        $this->configuration = new FixtureDataConfiguration();
+        $this->configuration = new FixtureDataConfiguration($this->classNamePrefix);
     }
 
     public function test_processConfiguration_usingAllSupportedOptions_processesCorrectly(): void {
@@ -92,7 +98,9 @@ YaML
                         ]
                     ]
                 ],
-                'file' => 'test_file.yml'
+                'file' => 'test_file.yml',
+                'set_name' => null,
+                'dependencies' => []
             ],
             [
                 'class' => '\Pecserke\YamlFixturesBundle\Parser\AnotherTestObject',
@@ -100,7 +108,9 @@ YaML
                 'equal_condition' => ['x'],
                 'transformer' => '@object_transformer.test',
                 'data' => [],
-                'file' => 'test_file.yml'
+                'file' => 'test_file.yml',
+                'set_name' => null,
+                'dependencies' => []
             ],
             [
                 'class' => '\Pecserke\YamlFixturesBundle\Parser\AnotherTestObject',
@@ -108,7 +118,9 @@ YaML
                 'equal_condition' => ['x', 'y'],
                 'transformer' => null,
                 'data' => [],
-                'file' => 'test_file.yml'
+                'file' => 'test_file.yml',
+                'set_name' => null,
+                'dependencies' => []
             ]
         ];
 
@@ -142,6 +154,39 @@ YaML
         $this->expectExceptionMessage('Invalid configuration for path "fixtures.0.transformer": Invalid object transformer: "This\\\\Class\\\\Does\\\\Not\\\\Exist"');
 
         $this->processor->processConfiguration($this->configuration, [$config]);
+    }
+
+    public function test_processConfiguration_withInvalidSetName_throwsException(): void {
+        $config = Yaml::parse(<<< YaML
+- class: Pecserke\YamlFixturesBundle\Parser\TestObject
+  set_name: Invalid Set Name
+YaML
+        );
+        $config[0]['file'] = 'test_file.yml';
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Invalid configuration for path "fixtures.0.set_name": Set name "Invalid Set Name" is not valid');
+
+        $this->processor->processConfiguration($this->configuration, [$config]);
+    }
+
+    public function test_processConfiguration_withValidSetNameAndDependency_processesCorrectly(): void {
+        $config = Yaml::parse(<<< YaML
+- class: Pecserke\YamlFixturesBundle\Parser\TestObject
+  set_name: ValidSetName
+
+- class: Pecserke\YamlFixturesBundle\Parser\AnotherTestObject
+  dependencies: [ ValidSetName ]
+YaML
+        );
+        $config[0]['file'] = 'test_file.yml';
+        $config[1]['file'] = 'test_file.yml';
+        $newClass = new class extends FixtureArrayDataFixture {};
+        $newClassName = get_class($newClass);
+        class_alias($newClassName, $this->classNamePrefix. 'ValidSetName');
+        $fixtures = $this->processor->processConfiguration($this->configuration, [$config]);
+
+        $this->assertEquals('ValidSetName', $fixtures[1]['dependencies'][0]);
     }
 }
 

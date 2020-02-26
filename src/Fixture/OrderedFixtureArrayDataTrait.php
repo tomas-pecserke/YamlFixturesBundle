@@ -11,8 +11,17 @@
 
 namespace Pecserke\YamlFixturesBundle\Fixture;
 
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+trait OrderedFixtureArrayDataTrait {
+    /**
+     * @var int
+     */
+    private $order = 0;
 
-abstract class OrderedFixtureArrayDataFixture extends FixtureArrayDataFixture implements OrderedFixtureInterface {
-    use OrderedFixtureArrayDataTrait;
+    public function getOrder(): int {
+        return $this->order;
+    }
+
+    public function setOrder(int $order): void {
+        $this->order = $order;
+    }
 }

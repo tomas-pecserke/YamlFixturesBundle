@@ -11,8 +11,9 @@
 
 namespace Pecserke\YamlFixturesBundle\Fixture;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 
-abstract class OrderedFixtureArrayDataFixture extends FixtureArrayDataFixture implements OrderedFixtureInterface {
-    use OrderedFixtureArrayDataTrait;
+abstract class DependentOrderedFixtureArrayDataFixture extends FixtureArrayDataFixture implements DependentFixtureInterface, OrderedFixtureInterface {
+    use DependentFixtureArrayDataTrait, OrderedFixtureArrayDataTrait;
 }

@@ -19,6 +19,15 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class FixtureDataConfiguration implements ConfigurationInterface {
+    /**
+     * @var string
+     */
+    private $classNamePrefix;
+
+    public function __construct(string $classNamePrefix) {
+        $this->classNamePrefix = $classNamePrefix;
+    }
+
     public function getConfigTreeBuilder(): TreeBuilder {
         $treeBuilder = new TreeBuilder('fixtures');
 
@@ -36,6 +45,19 @@ class FixtureDataConfiguration implements ConfigurationInterface {
                         ->validate()
                             ->ifTrue(Closure::fromCallable([self::class, 'isClassInvalid']))
                             ->thenInvalid('Class %s does not exist')
+                        ->end()
+                    ->end()
+                    ->scalarNode('set_name')
+                        ->defaultNull()
+                        ->validate()
+                            ->ifTrue(Closure::fromCallable([self::class, 'isSetNameInvalid']))
+                            ->thenInvalid('Set name %s is not valid')
+                        ->end()
+                    ->end()
+                    ->arrayNode('dependencies')
+                        ->scalarPrototype()
+                            ->isRequired()
+                            ->cannotBeEmpty()
                         ->end()
                     ->end()
                     ->integerNode('order')->defaultNull()->end()
@@ -85,21 +107,26 @@ class FixtureDataConfiguration implements ConfigurationInterface {
         return $treeBuilder;
     }
 
-    public static function isClassInvalid(string $class): bool {
+    private static function isSetNameInvalid(string $name): bool {
+        /** @noinspection NotOptimalRegularExpressionsInspection */
+        return !preg_match('/^[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?$/', $name);
+    }
+
+    private static function isClassInvalid(string $class): bool {
         return !class_exists($class);
     }
 
-    public static function isServiceReferenceOrClassInvalidClosure(string $className): Closure {
+    private static function isServiceReferenceOrClassInvalidClosure(string $className): Closure {
         return static function ($value) use ($className) {
             return self::isServiceReferenceOrClassInvalid($value, $className);
         };
     }
 
-    public static function isServiceReferenceOrClassInvalid($value, string $className): bool {
+    private static function isServiceReferenceOrClassInvalid($value, string $className): bool {
         return !is_string($value) || !(strpos($value, '@') === 0 || is_a($value, $className, true));
     }
 
-    public static function normalizeClassDataArray(array $data): array {
+    private static function normalizeClassDataArray(array $data): array {
         $result = [];
         foreach ($data as $key => $value) {
             if (empty($value['@reference']) && is_string($key)) {
@@ -111,7 +138,7 @@ class FixtureDataConfiguration implements ConfigurationInterface {
         return $result;
     }
 
-    public static function normalizeSingleObjectDataArray(array $data): array {
+    private static function normalizeSingleObjectDataArray(array $data): array {
         $result = [];
         if (isset($data['@reference'])) {
             $result['@reference'] = $data['@reference'];

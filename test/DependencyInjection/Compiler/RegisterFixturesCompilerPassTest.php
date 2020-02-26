@@ -75,21 +75,23 @@ class RegisterFixturesCompilerPassTest extends TestCase {
         $this->container = new ContainerBuilder(new ParameterBag());
         $this->container->setParameter('kernel.bundles', [$this->bundle]);
         $this->container->setParameter('kernel.project_dir', $this->projectDir->url());
+        $this->container->setParameter('kernel.project_dir', $this->projectDir->url());
+        $this->container->setParameter('pecserke_yaml_fixtures.fixture_class_prefix', 'App\\Migrations\\');
         $this->container->set(
             FixtureArrayDataLoaderInterface::class,
             $this->getMockForAbstractClass(FixtureArrayDataLoaderInterface::class)
         );
 
-        $this->compilerPass = new RegisterFixturesCompilerPass();
-
         $this->autoloader = new DynamicFixtureArrayDataFixtureClassAutoloader();
         $this->autoloader->register();
+
+        $this->compilerPass = new RegisterFixturesCompilerPass($this->autoloader);
     }
 
     /**
      * @throws Exception
      */
-    public function testRegistersFixturesAsTaggedServicesIncludingOverriding(): void {
+    public function test_process_registersFixturesAsTaggedServicesIncludingOverriding(): void {
         $bundleStructure = ['Resources' => ['fixtures' => [
             'example_2.yml' => <<< YaML
 - class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
@@ -115,6 +117,7 @@ YaML
             'bundles' => [$this->bundle->getName() => [
                 'example_2.yml' => <<< YaML
 - class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
+  dependencies: [ bundle_example_1 ]
   equal_condition: [ publicProperty ]
   data:
     example.object.2:
@@ -123,6 +126,7 @@ YaML
             ]],
             'example_1.yml' => <<< YaML
 - class: Pecserke\YamlFixturesBundle\Stubs\ExampleObject
+  set_name: bundle_example_1
   order: 1
   data:
     example.object.4:
@@ -132,7 +136,6 @@ YaML
         vfsStream::create($projectStructure, $this->projectDir);
 
         $overrideDir = $this->projectDir->url() . '/fixtures/bundles/' . $this->bundle->getName();
-
         $this->compilerPass->process($this->container);
         $taggedServiceIds = $this->container->findTaggedServiceIds(FixturesCompilerPass::FIXTURE_TAG);
         $services = array_map([$this->container, 'get'], array_keys($taggedServiceIds));

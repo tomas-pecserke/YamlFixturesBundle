@@ -11,40 +11,37 @@
 
 namespace Pecserke\YamlFixturesBundle\Autoloader;
 
+use Pecserke\YamlFixturesBundle\Fixture\DependentFixtureArrayDataFixture;
+use Pecserke\YamlFixturesBundle\Fixture\DependentOrderedFixtureArrayDataFixture;
 use Pecserke\YamlFixturesBundle\Fixture\FixtureArrayDataFixture;
 use Pecserke\YamlFixturesBundle\Fixture\OrderedFixtureArrayDataFixture;
 
 final class DynamicFixtureArrayDataFixtureClassAutoloader extends AbstractAutoloader {
-    public const CLASS_NAME_BASE = 'Pecserke\\YamlFixturesBundle\\Fixture\\Dynamic\\FixtureArrayDataFixture';
-    public const ORDERED_SUFFIX = 'Ordered';
-
     /**
-     * Dynamic fixture array data fixture class name pattern
-     *
-     * @var string
+     * @var array
      */
-    private static $pattern;
-
-    public function __construct() {
-        if (self::$pattern === null) {
-            self::$pattern = sprintf(
-                '/^%s(%s)?_[a-zA-Z0-9]+$/',
-                str_replace('\\', '\\\\', self::CLASS_NAME_BASE),
-                self::ORDERED_SUFFIX
-            );
-        }
-    }
+    private $registered = [];
 
     public function loadClass(string $className): void {
-        $matches = [];
-        if (!preg_match(self::$pattern, $className, $matches)) {
+        if (!array_key_exists($className, $this->registered)) {
             return;
         }
 
-        $newClass = empty($matches[1])
-            ? new class extends FixtureArrayDataFixture {}
-            : new class extends OrderedFixtureArrayDataFixture {};
+        $classProperties = $this->registered[$className];
+        if ($classProperties['ordered']) {
+            $newClass = $classProperties['dependent']
+                ? new class extends DependentOrderedFixtureArrayDataFixture {}
+                : new class extends OrderedFixtureArrayDataFixture {};
+        } else {
+            $newClass = $classProperties['dependent']
+                ? new class extends DependentFixtureArrayDataFixture {}
+                : new class extends FixtureArrayDataFixture {};
+        }
         $newClassName = get_class($newClass);
         class_alias($newClassName, $className);
+    }
+
+    public function registerFixtureClass(string $name, bool $ordered, bool $dependent): void {
+        $this->registered[$name] = ['ordered' => $ordered, 'dependent' => $dependent];
     }
 }

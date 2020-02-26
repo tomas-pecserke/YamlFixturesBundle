@@ -23,9 +23,21 @@ class PecserkeYamlFixturesExtensionTest extends TestCase {
     public function testLoadingRegistersDefaultObjectTransformer(): void {
         $container = new ContainerBuilder();
         $extension = new PecserkeYamlFixturesExtension();
-        $extension->load([], $container);
+        $extension->load(
+            [
+                'pecserke_yaml_fixtures' => [
+                    'fixture_class_prefix' => 'Test\\ClassName\\Prefix\\'
+                ]
+            ],
+            $container
+        );
         $container->compile();
 
+
+        $this->assertEquals(
+            'Test\\ClassName\\Prefix\\',
+            $container->getParameter('pecserke_yaml_fixtures.fixture_class_prefix')
+        );
         $this->assertInstanceOf(
             ObjectTransformerInterface::class,
             $container->get('pecserke_yaml_fixtures.object_transformer.default')

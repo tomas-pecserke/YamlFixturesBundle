@@ -14,7 +14,7 @@ namespace Pecserke\YamlFixturesBundle\Fixture;
 use PHPUnit\Framework\TestCase;
 
 class OrderedFixtureArrayDataFixtureTest extends TestCase {
-    public function testGetOrderReturnsValueThatWasSetBefore(): void {
+    public function test_getOrder_returnsValueThatWasSetBefore(): void {
         $fixture = new class extends OrderedFixtureArrayDataFixture {};
 
         $order = 1234;
